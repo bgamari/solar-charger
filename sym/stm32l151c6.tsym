@@ -20,7 +20,7 @@ pinwidthhorizontal=400
 # if you have a device with slots, you'll have to use slot= and slotdef=
 # use comment= if there are special information you want to add
 version=20060113 1
-name=L79Lxx
+name=STM32L151Cx
 device=STM32L151Cx
 refdes=U?
 footprint=STM32L151Cx
