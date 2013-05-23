@@ -4,9 +4,13 @@ C 57700 41300 1 0 0 stm32l151c6.sym
 T 64000 47000 5 10 1 1 0 6 1
 refdes=U?
 T 60900 44700 5 10 0 0 0 0 1
-footprint=SOT89
+footprint=TSSOP14
 T 60900 44500 5 10 0 0 0 0 1
-device=STM32L151Cx
+device=TCA6507
+T 57700 41300 5 10 1 1 0 0 1
+value=3.3V
+T 57700 41300 5 10 0 0 0 0 1
+symversion=0.1
 }
 C 49900 52300 1 0 1 connector2-2.sym
 {
@@ -38,11 +42,13 @@ C 53800 51500 1 0 0 tps71501.sym
 T 55600 53200 5 10 1 1 0 6 1
 refdes=U?
 T 54400 53400 5 10 0 0 0 0 1
-device=TPS71501
+device=TCA6507
 T 54400 53600 5 10 0 0 0 0 1
-footprint=SOT89
+footprint=TSSOP14
 T 54700 52500 5 10 1 1 0 0 1
 value=3.3V
+T 53800 51500 5 10 0 0 0 0 1
+symversion=0.1
 }
 N 55900 52700 56100 52700 4
 C 54800 51300 1 0 0 gnd-1.sym
@@ -51,9 +57,13 @@ C 68600 50500 1 0 0 ucc27518.sym
 T 70400 52200 5 10 1 1 0 6 1
 refdes=U?
 T 69500 51700 5 10 0 0 0 0 1
-device=UCC27518
+device=TCA6507
 T 69500 51900 5 10 0 0 0 0 1
-footprint=SOT89
+footprint=TSSOP14
+T 68600 50500 5 10 1 1 0 0 1
+value=3.3V
+T 68600 50500 5 10 0 0 0 0 1
+symversion=0.1
 }
 C 69600 50300 1 0 0 gnd-1.sym
 C 72400 49900 1 0 1 inductor-1.sym
@@ -96,9 +106,13 @@ C 71300 35600 1 0 0 ucc27518.sym
 T 73100 37300 5 10 1 1 0 6 1
 refdes=U?
 T 72200 36800 5 10 0 0 0 0 1
-device=UCC27518
+device=TCA6507
 T 72200 37000 5 10 0 0 0 0 1
-footprint=SOT89
+footprint=TSSOP14
+T 71300 35600 5 10 1 1 0 0 1
+value=3.3V
+T 71300 35600 5 10 0 0 0 0 1
+symversion=0.1
 }
 N 73800 36800 73800 37800 4
 C 72300 35400 1 0 0 gnd-1.sym
@@ -143,11 +157,15 @@ netname=CH1_EN_A
 C 76600 48200 1 0 0 opamp-1.sym
 {
 T 77300 49000 5 10 0 0 0 0 1
-device=OPAMP
+device=TCA6507
 T 77300 48800 5 10 1 1 0 0 1
 refdes=U?
 T 77300 49600 5 10 0 0 0 0 1
 symversion=0.1
+T 76600 48200 5 10 0 0 0 0 1
+footprint=TSSOP14
+T 76600 48200 5 10 1 1 0 0 1
+value=3.3V
 }
 C 77000 47900 1 0 0 gnd-1.sym
 C 64400 46700 1 270 0 3.3V-plus-1.sym
@@ -272,7 +290,7 @@ symversion=0.1
 C 48900 49900 1 90 0 capacitor-1.sym
 {
 T 48200 50100 5 10 0 0 90 0 1
-device=CAPACITOR
+device=POLARIZED_CAPACITOR
 T 49000 50600 5 10 1 1 180 0 1
 refdes=C?
 T 48000 50100 5 10 0 0 90 0 1
@@ -281,7 +299,7 @@ symversion=0.1
 C 47400 49900 1 90 0 capacitor-1.sym
 {
 T 46700 50100 5 10 0 0 90 0 1
-device=CAPACITOR
+device=POLARIZED_CAPACITOR
 T 47100 50600 5 10 1 1 180 0 1
 refdes=C?
 T 46500 50100 5 10 0 0 90 0 1
@@ -290,7 +308,7 @@ symversion=0.1
 C 49700 49900 1 90 0 capacitor-1.sym
 {
 T 49000 50100 5 10 0 0 90 0 1
-device=CAPACITOR
+device=POLARIZED_CAPACITOR
 T 49800 50600 5 10 1 1 180 0 1
 refdes=C?
 T 48800 50100 5 10 0 0 90 0 1
@@ -386,7 +404,7 @@ netname=VPANEL
 C 50500 49900 1 90 0 capacitor-1.sym
 {
 T 49800 50100 5 10 0 0 90 0 1
-device=CAPACITOR
+device=POLARIZED_CAPACITOR
 T 50600 50600 5 10 1 1 180 0 1
 refdes=C?
 T 49600 50100 5 10 0 0 90 0 1
@@ -415,9 +433,13 @@ C 71300 39400 1 0 0 ucc27518.sym
 T 72000 41100 5 10 1 1 0 6 1
 refdes=U?
 T 72200 40600 5 10 0 0 0 0 1
-device=UCC27518
+device=TCA6507
 T 72200 40800 5 10 0 0 0 0 1
-footprint=SOT89
+footprint=TSSOP14
+T 71300 39400 5 10 1 1 0 0 1
+value=3.3V
+T 71300 39400 5 10 0 0 0 0 1
+symversion=0.1
 }
 N 73800 39400 73800 40600 4
 N 73200 38900 73000 38900 4
@@ -537,6 +559,8 @@ T 54500 36000 5 10 1 1 90 6 1
 refdes=LED7
 T 53500 35400 5 10 0 0 90 6 1
 symversion=0.1
+T 54300 36200 5 10 1 1 0 0 1
+footprint=0603
 }
 N 54100 35300 54100 34900 4
 {
@@ -621,9 +645,13 @@ C 68600 47300 1 0 0 ucc27518.sym
 T 70400 49100 5 10 1 1 180 0 1
 refdes=U?
 T 69500 48500 5 10 0 0 0 0 1
-device=UCC27518
+device=TCA6507
 T 69500 48700 5 10 0 0 0 0 1
-footprint=SOT89
+footprint=TSSOP14
+T 68600 47300 5 10 1 1 0 0 1
+value=3.3V
+T 68600 47300 5 10 0 0 0 0 1
+symversion=0.1
 }
 C 69500 49200 1 0 0 vcc-1.sym
 N 70700 48500 72000 48500 4
@@ -735,6 +763,10 @@ T 62900 36000 5 10 0 0 0 0 1
 device=TCA6507
 T 62900 36200 5 10 0 0 0 0 1
 footprint=TSSOP14
+T 62000 33800 5 10 1 1 0 0 1
+value=3.3V
+T 62000 33800 5 10 0 0 0 0 1
+symversion=0.1
 }
 N 62100 37000 61600 37000 4
 {
@@ -778,6 +810,8 @@ T 67300 36800 5 10 1 1 0 6 1
 refdes=LED0
 T 66300 37600 5 10 0 0 0 6 1
 symversion=0.1
+T 67100 36800 5 10 1 1 0 0 1
+footprint=0603
 }
 C 65000 36900 1 0 1 resistor-1.sym
 {
@@ -798,6 +832,8 @@ T 66100 36400 5 10 1 1 0 6 1
 refdes=LED1
 T 65100 37200 5 10 0 0 0 6 1
 symversion=0.1
+T 65900 36400 5 10 1 1 0 0 1
+footprint=0603
 }
 C 65000 36500 1 0 1 resistor-1.sym
 {
@@ -817,6 +853,8 @@ T 67300 36000 5 10 1 1 0 6 1
 refdes=LED2
 T 66300 36800 5 10 0 0 0 6 1
 symversion=0.1
+T 67100 36000 5 10 1 1 0 0 1
+footprint=0603
 }
 C 65000 36100 1 0 1 resistor-1.sym
 {
@@ -839,6 +877,8 @@ T 65100 36400 5 10 0 0 0 6 1
 symversion=0.1
 T 66100 35600 5 10 1 1 0 6 1
 refdes=LED3
+T 65900 35600 5 10 1 1 0 0 1
+footprint=0603
 }
 N 66000 35800 65900 35800 4
 C 65000 35700 1 0 1 resistor-1.sym
@@ -859,6 +899,8 @@ T 65100 35600 5 10 0 0 0 6 1
 symversion=0.1
 T 66100 34800 5 10 1 1 0 6 1
 refdes=LED5
+T 65900 34800 5 10 1 1 0 0 1
+footprint=0603
 }
 N 66000 35000 65900 35000 4
 C 65000 34900 1 0 1 resistor-1.sym
@@ -888,6 +930,8 @@ T 66300 36000 5 10 0 0 0 6 1
 symversion=0.1
 T 67300 35200 5 10 1 1 0 6 1
 refdes=LED4
+T 67100 35200 5 10 1 1 0 0 1
+footprint=0603
 }
 C 67100 35600 1 270 0 3.3V-plus-1.sym
 C 65000 34500 1 0 1 resistor-1.sym
@@ -908,6 +952,8 @@ T 66300 35200 5 10 0 0 0 6 1
 symversion=0.1
 T 67300 34400 5 10 1 1 0 6 1
 refdes=LED6
+T 67100 34400 5 10 1 1 0 0 1
+footprint=0603
 }
 C 67100 34800 1 270 0 3.3V-plus-1.sym
 C 58200 36400 1 270 0 switch-pushbutton-no-1.sym
