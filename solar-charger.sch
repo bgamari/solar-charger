@@ -3,10 +3,10 @@ C 57700 41300 1 0 0 stm32l151c6.sym
 {
 T 64000 47000 5 10 1 1 0 6 1
 refdes=U2
-T 60900 44700 5 10 0 0 0 0 1
-footprint=SOT89
 T 60900 44500 5 10 0 0 0 0 1
 device=STM32L151Cx
+T 60900 44700 5 10 0 0 0 0 1
+footprint=LQFP48_7
 }
 C 49900 52300 1 0 1 connector2-2.sym
 {
