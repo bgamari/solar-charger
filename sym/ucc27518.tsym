@@ -23,8 +23,8 @@ version=20060113 1
 name=UCC27518
 device=UCC27518
 refdes=U?
-footprint=SOT89
-description=Fixed negative voltage regulator
+footprint=SOT23-5
+description=MOSFET driver
 author=Ben Gamari <bgamari@gmail.com>
 numslots=0
 
