@@ -85,7 +85,7 @@ T 71800 50800 9 10 1 0 0 0 8
 Battery charging buck-boost:
  * 6 NiMH (1.45V each charged)
  * 9V in series
- * Capacity: 1100mA h to 2800mA h
+ * Capacity: 1100mA h to 2800mA h per cell
  * Limit charge time to 10 h
  * Charge rate: C / 10 = 100mA
  * Trickle rate: C / 300
@@ -728,9 +728,9 @@ netname=VSENSE1_EN
 }
 N 74900 48300 74900 49200 4
 N 74900 47400 74900 47200 4
-N 57800 42900 57000 42900 4
+N 60100 47200 60100 48000 4
 {
-T 56900 42800 5 10 1 1 0 6 1
+T 60000 48100 5 10 1 1 270 6 1
 netname=CH1_IN_B
 }
 N 62500 41400 62500 40600 4
