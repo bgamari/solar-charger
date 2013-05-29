@@ -1,5 +1,7 @@
+#include <libopencm3/stm32/rcc.h>
 #include "usart.h"
 #include "regulator.h"
+#include "io_expander.h"
 
 void handle_line_recv(const char* line, unsigned int length)
 {
@@ -8,7 +10,9 @@ void handle_line_recv(const char* line, unsigned int length)
 
 int main(void)
 {
-  rcc_peripheral_disable_clock(&RCC_AHBENR, RCC_AHNENR_GPIOBEN);
+  rcc_peripheral_enable_clock(&RCC_AHBENR, RCC_AHBENR_GPIOAEN);
+  rcc_peripheral_enable_clock(&RCC_AHBENR, RCC_AHBENR_GPIOBEN);
+  enable_io_expander();
   on_line_recv = handle_line_recv;
   configure_usart();
   //configure_ch1();

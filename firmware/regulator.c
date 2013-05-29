@@ -1,4 +1,5 @@
 #include <libopencm3/stm32/timer.h>
+#include <libopencm3/stm32/rcc.h>
 #include "regulator.h"
 
 /* Configure center-aligned PWM output
@@ -76,7 +77,7 @@ int configure_ch1(u32 period, u32 ta, u32 tb, u32 dt)
 
 void enable_regulator()
 {
-  rcc_peripheral_enable_clock();
+  //rcc_peripheral_enable_clock();
 }
 
 static void configure_ch2(void)

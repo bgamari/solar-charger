@@ -1,3 +1,3 @@
-void enable_regulator();
-void disable_regulator();
+void enable_regulator(void);
+void disable_regulator(void);
 
