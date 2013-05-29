@@ -1,4 +1,4 @@
-BINARY = regulator
+BINARY = solar-charger
 LDSCRIPT = libopencm3/lib/stm32/l1/stm32l15xx6.ld
 
 PREFIX	?= arm-none-eabi
@@ -12,11 +12,12 @@ TOOLCHAIN_DIR ?= libopencm3
 ARCH_FLAGS      = -mthumb -mcpu=cortex-m3 -msoft-float
 CFLAGS		+= -Os -g \
 		   -Wall -Wextra -Wimplicit-function-declaration \
-		   -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes \
+		   -Wredundant-decls -Wstrict-prototypes \
 		   -Wundef -Wshadow \
 		   -I$(TOOLCHAIN_DIR)/include \
+		   -std=c11 \
 		   -fno-common $(ARCH_FLAGS) -MD -DSTM32L1
-LDFLAGS		+= --static -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group \
+LDFLAGS		+= -static -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group \
 		   -L$(TOOLCHAIN_DIR)/lib \
 		   -T$(LDSCRIPT) -nostartfiles -Wl,--gc-sections \
 		   $(ARCH_FLAGS) -mfix-cortex-m3-ldrd
@@ -25,7 +26,7 @@ CFLAGS          += -I$(TOOLCHAIN_DIR)/include
 LDFLAGS         += -L$(TOOLCHAIN_DIR)/lib -L$(TOOLCHAIN_DIR)/lib/stm32/l1
 SCRIPT_DIR      = $(TOOLCHAIN_DIR)/share
 
-OBJS		+= $(BINARY).o
+OBJS		+= $(BINARY).o regulator.o usart.o
 
 OOCD		?= openocd
 OOCD_INTERFACE	?= flossjtag
