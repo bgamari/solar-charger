@@ -52,8 +52,6 @@ int configure_ch1(u32 period, u32 ta, u32 tb, u32 dt)
   u32 timer_b = TIM4; enum tim_oc_id oc_b = TIM_OC3;
   u32 slave_trigger_src = TIM_SMCR_TS_ITR0; /// FIXME
 
-  // TODO: Set enable as trigger output
-
   // Configure PWMs independently
   configure_pwm(timer_a, oc_a, period, 1, ta);
   configure_pwm(timer_b, oc_b, period, 1, tb);
@@ -67,7 +65,7 @@ int configure_ch1(u32 period, u32 ta, u32 tb, u32 dt)
   timer_slave_set_trigger(timer_b, slave_trigger_src);
 
   // Configure offset
-  timer_set_period(timer_a, period-dt);
+  timer_set_period(timer_a, period - dt);
   timer_generate_event(timer_a, TIM_EGR_UG);
   timer_set_period(timer_a, period);
 
