@@ -13,8 +13,11 @@ int main(void)
   rcc_peripheral_enable_clock(&RCC_AHBENR, RCC_AHBENR_GPIOAEN);
   rcc_peripheral_enable_clock(&RCC_AHBENR, RCC_AHBENR_GPIOBEN);
   enable_io_expander();
+
   on_line_recv = handle_line_recv;
   configure_usart();
+  usart_print("hello world!\n");
+
   //configure_ch1();
   //configure_ch2();
   return 0;

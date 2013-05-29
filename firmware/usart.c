@@ -28,7 +28,6 @@ void configure_usart(void)
   usart_set_parity(USART1, USART_PARITY_NONE);
   usart_set_baudrate(USART1, 115200);
   usart_enable_rx_interrupt(USART1);
-  usart_print("hello world!\n");
 }
 
 void usart1_isr(void)
