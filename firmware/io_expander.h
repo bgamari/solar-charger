@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 enum led_state {
   led_off        = 0x0,
   led_on_pwm0    = 0x2,
@@ -13,3 +15,4 @@ void disable_io_expander(void);
 
 void update_leds(void);
 void clear_leds(void);
+void set_led(uint8_t led, enum led_state state);

@@ -13,7 +13,7 @@ static u8 shadow[3];
 void enable_io_expander()
 {
   gpio_set(expander_en_port, expander_en_pin);
-  rcc_peripheral_enable_clock(RCC_APB1ENR, RCC_APB1ENR_I2C1EN);
+  rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_I2C1EN);
   i2c_reset(I2C1);
   i2c_peripheral_enable(I2C1);
   i2c_set_standard_mode(I2C1);
@@ -23,7 +23,7 @@ void enable_io_expander()
 void disable_io_expander()
 {
   gpio_clear(expander_en_port, expander_en_pin);
-  rcc_peripheral_disable_clock(RCC_APB1ENR, RCC_APB1ENR_I2C1EN);
+  rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_I2C1EN);
   i2c_peripheral_disable(I2C1);
 }
 
