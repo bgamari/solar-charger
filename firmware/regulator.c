@@ -7,6 +7,30 @@ const u8 ch2_enabled = 0x2;
 
 static u8 reg_state = 0;
 
+/*
+ * Switching voltage regulator core
+ *
+ * This is the logic for driving the two switching regulator channels.
+ * Channel 1 is a buck-boost regulator with both current and voltage sensing.
+ * Channel 2 is a buck regulator with only voltage sensing.
+ * 
+ *  == Common peripherals ==
+ *
+ *   ADC1:   Sample voltages and current sense
+ *   TIM6:   ADC trigger
+ *   GPIOA:  MOSFET driver enable
+ * 
+ *  == Channel 1 peripherals ==
+ *
+ *   TIM2:   Buck regulator switch PWM
+ *   TIM4:   Boost regulator switch PWM
+ *
+ *  == Channel 2 peripherals ==
+ *
+ *   TIM3:   Buck regulator switch PWM
+ *
+ */
+
 static void setup_common_peripherals(void)
 {
   if (reg_state == 0) {
