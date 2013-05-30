@@ -21,7 +21,7 @@ void usart_print(const char* c)
 
 void configure_usart(void)
 {
-  rcc_peripheral_enable_clock(RCC_APB2ENR, RCC_APB2ENR_USART1EN);
+  rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_USART1EN);
   usart_enable(USART1);
   usart_set_databits(USART1, 8);
   usart_set_stopbits(USART1, USART_STOPBITS_1);

@@ -2,6 +2,22 @@
 #include <libopencm3/stm32/rcc.h>
 #include "regulator.h"
 
+const u8 ch1_enabled = 0x1;
+const u8 ch2_enabled = 0x2;
+
+static u8 reg_state = 0;
+
+static void setup_common_peripherals(void)
+{
+  if (reg_state == 0) {
+    rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM6EN);
+    rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB2ENR_ADC1EN);
+  } else {
+    rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM6EN);
+    rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB2ENR_ADC1EN);
+  }
+}
+
 /* Configure center-aligned PWM output
  *
  *           period
@@ -75,12 +91,37 @@ int configure_ch1(u32 period, u32 ta, u32 tb, u32 dt)
   return 0;
 }
 
-void enable_regulator()
+void enable_ch1()
 {
-  //rcc_peripheral_enable_clock();
+  rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
+  rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM4EN);
+  reg_state |= ch1_enabled;
+  setup_common_peripherals();
+}
+
+void disable_ch1(void)
+{
+  rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
+  rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM4EN);
+  reg_state &= ~ch1_enabled;
+  setup_common_peripherals();
 }
 
 static void configure_ch2(void)
 {
 }
  
+void enable_ch2(void)
+{
+  rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
+  reg_state |= ch2_enabled;
+  setup_common_peripherals();
+}
+
+void disable_ch2(void)
+{
+  rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
+  reg_state &= ~ch2_enabled;
+  setup_common_peripherals();
+}
+
