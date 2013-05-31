@@ -2229,7 +2229,6 @@ Layer(1 "component")
 	Line[59.8150mm 1725.00mil 59.8150mm 41.4600mm 80.00mil 20.00mil "clearline"]
 	Line[59.8150mm 41.4600mm 60.0000mm 1625.00mil 80.00mil 20.00mil "clearline"]
 	Line[72.2000mm 48.8100mm 2850.00mil 49.0000mm 10.00mil 20.00mil "clearline"]
-	Line[62.6849mm 1975.00mil 2475.00mil 49.9849mm 10.00mil 20.00mil "clearline"]
 	Line[2210.00mil 1540.00mil 53.7251mm 41.5249mm 10.00mil 20.00mil "clearline"]
 	Line[53.7251mm 41.5249mm 2080.00mil 41.5249mm 10.00mil 20.00mil "clearline"]
 	Line[51.8234mm 41.0248mm 53.4632mm 41.0248mm 10.00mil 20.00mil "clearline"]
