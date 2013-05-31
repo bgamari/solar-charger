@@ -1796,32 +1796,29 @@ Element["onsolder" "omron-b3s" "RESET" "unknown" 41.0350mm 51.8070mm -3.3000mm -
 
 	)
 
-Element["" "0603" "R17" "unknown" 1420.00mil 35.9019mm -2.6510mm 70.11mil 1 100 ""]
+Element["" "0603" "R17" "unknown" 67.4761mm 2000.00mil 70.11mil 2.6510mm 2 100 ""]
 (
-	Pad[0.0000 31.49mil 0.0000 35.43mil 39.37mil 20.00mil 45.37mil "input" "1" "square,edge2"]
-	Pad[0.0000 -35.43mil 0.0000 -31.49mil 39.37mil 20.00mil 45.37mil "input" "2" "square"]
-	ElementLine [-34.68mil 70.11mil 34.68mil 70.11mil 10.00mil]
-	ElementLine [-34.68mil -70.11mil -34.68mil 70.11mil 10.00mil]
-	ElementLine [-34.68mil -70.11mil 34.68mil -70.11mil 10.00mil]
-	ElementLine [34.68mil -70.11mil 34.68mil 70.11mil 10.00mil]
+	Pad[31.49mil 0.0000 35.43mil 0.0000 39.37mil 20.00mil 45.37mil "input" "1" "square,edge2"]
+	Pad[-35.43mil 0.0000 -31.49mil 0.0000 39.37mil 20.00mil 45.37mil "input" "2" "square"]
+	ElementLine [70.11mil -34.68mil 70.11mil 34.68mil 10.00mil]
+	ElementLine [-70.11mil 34.68mil 70.11mil 34.68mil 10.00mil]
+	ElementLine [-70.11mil -34.68mil -70.11mil 34.68mil 10.00mil]
+	ElementLine [-70.11mil -34.68mil 70.11mil -34.68mil 10.00mil]
 
 	)
 
-Element["" "JUMPER2" "THERM" "unknown" 1145.00mil 1345.00mil 110.00mil -50.00mil 3 100 ""]
+Element["" "JUMPER2" "THERM" "unknown" 2520.00mil 2000.00mil -110.00mil 50.00mil 1 100 ""]
 (
 	Pin[0.0000 0.0000 60.00mil 30.00mil 66.00mil 38.00mil "1" "1" "square"]
-	Pin[0.0000 100.00mil 60.00mil 30.00mil 66.00mil 38.00mil "2" "2" ""]
-	ElementLine [-50.00mil -50.00mil -50.00mil 150.00mil 10.00mil]
-	ElementLine [-50.00mil 150.00mil 50.00mil 150.00mil 10.00mil]
-	ElementLine [50.00mil 150.00mil 50.00mil -50.00mil 10.00mil]
-	ElementLine [50.00mil -50.00mil -50.00mil -50.00mil 10.00mil]
+	Pin[0.0000 -100.00mil 60.00mil 30.00mil 66.00mil 38.00mil "2" "2" ""]
+	ElementLine [50.00mil -150.00mil 50.00mil 50.00mil 10.00mil]
+	ElementLine [-50.00mil -150.00mil 50.00mil -150.00mil 10.00mil]
+	ElementLine [-50.00mil -150.00mil -50.00mil 50.00mil 10.00mil]
 	ElementLine [-50.00mil 50.00mil 50.00mil 50.00mil 10.00mil]
-	ElementLine [50.00mil 50.00mil 50.00mil -50.00mil 10.00mil]
+	ElementLine [-50.00mil -50.00mil 50.00mil -50.00mil 10.00mil]
+	ElementLine [-50.00mil -50.00mil -50.00mil 50.00mil 10.00mil]
 
 	)
-Rat[32.9700mm 1475.00mil 1 1145.00mil 1445.00mil 1  ""]
-Rat[1420.00mil 36.8018mm 0 1225.00mil 35.6935mm 1  "via"]
-Rat[1420.00mil 35.0020mm 0 1145.00mil 1345.00mil 1  ""]
 Layer(1 "component")
 (
 	Line[1750.00mil 2475.00mil 1750.00mil 2400.00mil 80.00mil 20.00mil "clearline"]
@@ -2243,6 +2240,19 @@ Layer(1 "component")
 	Line[2315.00mil 1825.00mil 2350.00mil 1825.00mil 25.00mil 20.00mil "clearline"]
 	Line[51.8234mm 42.5249mm 55.0197mm 42.5249mm 10.00mil 20.00mil "clearline"]
 	Line[55.0197mm 42.5249mm 2180.00mil 42.8772mm 10.00mil 20.00mil "clearline"]
+	Line[2850.00mil 1720.00mil 2700.00mil 1720.00mil 10.00mil 20.00mil "clearline"]
+	Line[2700.00mil 1720.00mil 2520.00mil 1900.00mil 10.00mil 20.00mil "clearline"]
+	Line[2520.00mil 2000.00mil 66.6262mm 2000.00mil 10.00mil 20.00mil "clearline"]
+	Line[2690.00mil 2000.00mil 2750.00mil 2000.00mil 10.00mil 20.00mil "clearline"]
+	Line[2750.00mil 2000.00mil 2775.00mil 2025.00mil 10.00mil 20.00mil "clearline"]
+	Line[2510.00mil 2000.00mil 2430.00mil 2000.00mil 10.00mil 20.00mil "clearline"]
+	Line[2430.00mil 2000.00mil 2320.00mil 1890.00mil 10.00mil 20.00mil "clearline"]
+	Line[2320.00mil 1890.00mil 2220.00mil 1890.00mil 10.00mil 20.00mil "clearline"]
+	Line[2220.00mil 1890.00mil 2190.00mil 1860.00mil 10.00mil 20.00mil "clearline"]
+	Line[2190.00mil 1860.00mil 2110.00mil 1860.00mil 10.00mil 20.00mil "clearline"]
+	Line[2110.00mil 1860.00mil 2060.00mil 1810.00mil 10.00mil 20.00mil "clearline"]
+	Line[2060.00mil 1810.00mil 2060.00mil 44.5254mm 10.00mil 20.00mil "clearline"]
+	Line[2060.00mil 44.5254mm 51.8234mm 44.0248mm 10.00mil 20.00mil "clearline"]
 )
 Layer(2 "solder")
 (
@@ -2774,5 +2784,6 @@ NetList()
 	(
 		Connect("R17-2")
 		Connect("THERM-1")
+		Connect("U2-25")
 	)
 )
