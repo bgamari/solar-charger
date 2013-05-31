@@ -1372,7 +1372,7 @@ Element["" "0603" "R2" "unknown" 33.8699mm 1700.00mil -1.4486mm -2.6510mm 0 100 
 
 	)
 
-Element["" "LQFP48_7" "U2" "unknown" 1875.00mil 1625.00mil -20.00mil -60.00mil 0 100 ""]
+Element["" "LQFP48_7" "U2" "unknown" 1875.00mil 1625.00mil 150.00mil -190.00mil 0 100 ""]
 (
 	Pad[-182.28mil -2.7498mm -148.30mil -2.7498mm 11.02mil 30.00mil 14.02mil "1" "1" "square"]
 	Pad[-182.28mil -88.58mil -148.30mil -88.58mil 11.02mil 30.00mil 14.02mil "2" "2" "square"]
@@ -1645,7 +1645,7 @@ Element["" "SOT23-5" "U4" "unknown" 1387.00mil 2548.50mil 76.50mil 33.50mil 0 10
 
 	)
 
-Element["" "SOT23-5" "U8" "unknown" 2145.00mil 2016.50mil -53.50mil 77.50mil 0 100 ""]
+Element["" "SOT23-5" "U8" "unknown" 2145.00mil 2016.50mil -43.50mil -132.50mil 0 100 ""]
 (
 	Pad[37.00mil -63.50mil 37.00mil -39.50mil 24.00mil 20.00mil 44.00mil "" "1" "square"]
 	Pad[0.0000 -63.50mil 0.0000 -39.50mil 24.00mil 20.00mil 44.00mil "" "2" "square"]
@@ -1673,7 +1673,7 @@ Element["" "0603" "C16" "unknown" 1970.00mil 51.2689mm -0.8039mm -3.5009mm 0 100
 
 	)
 
-Element["" "SOT23-5" "U7" "unknown" 1858.00mil 2026.50mil 3.50mil 79.50mil 0 100 ""]
+Element["" "SOT23-5" "U7" "unknown" 1858.00mil 2026.50mil -36.50mil -130.50mil 0 100 ""]
 (
 	Pad[37.00mil -63.50mil 37.00mil -39.50mil 24.00mil 20.00mil 44.00mil "" "1" "square"]
 	Pad[0.0000 -63.50mil 0.0000 -39.50mil 24.00mil 20.00mil 44.00mil "" "2" "square"]
