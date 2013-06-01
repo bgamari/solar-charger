@@ -29,6 +29,8 @@ T 76100 48700 5 10 1 1 270 0 1
 refdes=RSENSE1
 T 75800 48700 5 10 0 0 270 0 1
 footprint=1206
+T 75600 48500 5 10 1 1 270 0 1
+value=0.05
 }
 C 69500 52400 1 0 0 vcc-1.sym
 C 55200 49300 1 0 0 gnd-1.sym
@@ -88,7 +90,7 @@ Battery charging buck-boost:
  * Capacity: 1100mA h to 2800mA h per cell
  * Limit charge time to 10 h
  * Charge rate: C / 10 = 100mA
- * Trickle rate: C / 300
+ * Trickle rate: C / 300 = 3mA
  * Design for maximum I = 2A
 N 73400 38400 73400 39000 4
 C 70700 35700 1 0 0 ucc27518.sym
@@ -214,9 +216,10 @@ T 75300 47200 5 10 1 1 0 0 1
 netname=VSENSE1
 }
 C 74800 46000 1 0 0 gnd-1.sym
-T 76800 39300 9 10 1 0 0 0 2
-Output: +3V to +9V
-Optimize for +5V
+T 74300 40200 9 10 1 0 0 0 3
+Auxiliary output buck:
+ * Output: +3V to +9V
+ * Optimize for +5V, < 1A
 C 75500 37000 1 90 0 resistor-1.sym
 {
 T 75100 37300 5 10 0 0 90 0 1
@@ -740,8 +743,8 @@ N 62500 41400 62500 40600 4
 T 62600 40500 5 10 1 1 90 6 1
 netname=CH1_EN_A
 }
-T 77800 48000 9 10 1 0 0 0 1
-Gain = ?
+T 78000 48000 9 10 1 0 0 0 1
+Gain <= 100
 C 57000 33300 1 0 0 tca6507.sym
 {
 T 58800 37000 5 10 1 1 0 6 1
@@ -1259,6 +1262,8 @@ T 77100 36700 5 10 1 1 270 0 1
 refdes=RSENSE2
 T 76800 36700 5 10 0 0 270 0 1
 footprint=1206
+T 76600 36500 5 10 1 1 270 0 1
+value=0.05
 }
 C 76800 35500 1 0 0 gnd-1.sym
 N 76900 36700 76900 38400 4
@@ -1316,8 +1321,8 @@ value=OPA340
 T 78300 38000 5 10 0 1 0 0 1
 footprint=SOT23-5
 }
-T 78800 36000 9 10 1 0 0 0 1
-Gain = ?
+T 78700 37100 9 10 1 0 0 0 1
+Gain = 50
 C 76300 34500 1 90 0 capacitor-1.sym
 {
 T 75600 34700 5 10 0 0 90 0 1
@@ -1333,3 +1338,5 @@ C 75900 35400 1 0 0 3.3V-plus-1.sym
 C 76000 34200 1 0 0 gnd-1.sym
 C 75600 46300 1 0 0 3.3V-plus-1.sym
 C 75700 45100 1 0 0 gnd-1.sym
+T 75700 52200 9 10 1 0 0 0 1
+8 batteries, 2800mA h, C/30 = 0.8A -> 37mV
