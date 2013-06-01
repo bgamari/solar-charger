@@ -1473,7 +1473,7 @@ Element["" "SOT669-PSMN0R9-25YLC" "Q3" "unknown" 1425.00mil 2775.00mil 50.00mil 
 
 	)
 
-Element["" "0603" "R14" "unknown" 1310.00mil 51.9039mm -1.4389mm -3.2469mm 0 100 ""]
+Element["" "0603" "R14" "40k" 1310 51 -1.4389mm -3.2469mm 0 100 ""]
 (
 	Pad[0.0000 -35.43mil 0.0000 -31.49mil 39.37mil 20.00mil 45.37mil "input" "1" "square"]
 	Pad[0.0000 31.49mil 0.0000 35.43mil 39.37mil 20.00mil 45.37mil "input" "2" "square,edge2"]
@@ -1766,7 +1766,7 @@ Element["" "SOT23-5" "U9" "OPA340" 2540.00mil 2021.50mil 76.50mil 7.50mil 0 100 
 
 	)
 
-Element["" "0603" "R20" "unknown" 2650.00mil 1940.00mil 49.89mil 15.63mil 0 100 ""]
+Element["" "0603" "R20" "40k" 2650 1940 49.89mil 15.63mil 0 100 ""]
 (
 	Pad[0.0000 31.49mil 0.0000 35.43mil 39.37mil 20.00mil 45.37mil "input" "1" "square,edge2"]
 	Pad[0.0000 -35.43mil 0.0000 -31.49mil 39.37mil 20.00mil 45.37mil "input" "2" "square"]
