@@ -33,4 +33,4 @@
   `PB6`    af4      `I2C1_SCL`   `SCL`             LED driver interface
   `PB7`    af4      `I2C1_SDA`   `SDA`             LED driver interface
   `PB8`    af2      `TIM4_CH3`   `CH1_IN_B`        switch PWM
-  
+
