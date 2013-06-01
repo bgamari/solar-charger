@@ -89,7 +89,7 @@ Battery charging buck-boost:
  * Limit charge time to 10 h
  * Charge rate: C / 10 = 100mA
  * Trickle rate: C / 300
- * Design for maximum I = 300mA
+ * Design for maximum I = 2A
 N 73400 38400 73400 39000 4
 C 70700 35700 1 0 0 ucc27518.sym
 {
