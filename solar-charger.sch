@@ -321,7 +321,7 @@ refdes=Z1
 T 55700 49900 5 10 1 1 90 0 1
 value=15V
 T 55500 49600 5 10 0 0 0 0 1
-footprint=SOD128
+footprint=SOD123
 }
 C 54400 50600 1 0 0 resistor-1.sym
 {
