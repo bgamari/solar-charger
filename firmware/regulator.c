@@ -4,14 +4,14 @@
 #include <libopencm3/stm32/l1/adc.h>
 #include "regulator.h"
 
+static u8 reg_state = 0;
 static const u8 ch1_enabled = 0x1;
 static const u8 ch2_enabled = 0x2;
 
-static u8 reg_state = 0;
-
 static const u32 vsense1_ch = ADC_CHANNEL5;
 static const u32 isense1_ch = ADC_CHANNEL3;
-static const u32 vsense2_ch = ADC_CHANNEL18;
+static const u32 vsense2_ch = ADC_CHANNEL21;
+static const u32 isense2_ch = ADC_CHANNEL20;
 
 /*
  * Switching voltage regulator core
@@ -39,7 +39,7 @@ static const u32 vsense2_ch = ADC_CHANNEL18;
 
 static void setup_common_peripherals(void)
 {
-  u8 sequence[] = { vsense1_ch, isense1_ch, vsense2_ch };
+  u8 sequence[] = { vsense1_ch, isense1_ch, vsense2_ch, isense2_ch };
 
   if (reg_state == 0) {
     rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM6EN);
@@ -49,15 +49,13 @@ static void setup_common_peripherals(void)
     rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB2ENR_ADC1EN);
 
     adc_power_on(ADC1);
-    adc_enable_scan_mode(ADC1);
-    adc_set_continuous_conversion_mode(ADC1);
+    adc_enable_external_trigger_injected(ADC1, ADC_CR2_JEXTEN_RISING,
+                                         ADC_CR2_JEXTSEL_TIM6_TRGO);
     adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_48CYC);
     //adc_set_resolution(ADC1, ADC_CR1_RES_12BIT);
-    //adc_eoc_after_each(ADC1);
-    adc_enable_eoc_interrupt(ADC1);
+    adc_enable_eoc_interrupt_injected(ADC1);
     adc_set_clk_prescale(ADC_CCR_ADCPRE_DIV4);
-    adc_set_regular_sequence(ADC1, 3, sequence);
-    adc_start_conversion_regular(ADC1);
+    adc_set_injected_sequence(ADC1, 4, sequence);
   }
 }
 
@@ -168,3 +166,12 @@ void disable_ch2(void)
   setup_common_peripherals();
 }
 
+void adc_eoc_irqhandler(void)
+{
+  // TODO
+}
+
+void adc_jeoc_irqhandler(void)
+{
+  // TODO
+}
