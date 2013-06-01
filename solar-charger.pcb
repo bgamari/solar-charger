@@ -1799,7 +1799,7 @@ Element["" "0603" "R18" "unknown" 65.6199mm 2140.00mil -17.03mil 35.63mil 0 100 
 
 	)
 
-Element["" "1206" "RSENSE2" "unknown" 2505.00mil 1850.00mil -85.00mil -85.00mil 0 80 ""]
+Element["" "1206" "RSENSE2" "0.05" 2505 1850 -85.00mil -85.00mil 0 80 ""]
 (
 	Pad[-60.00mil -5.00mil -60.00mil 5.00mil 60.00mil 30.00mil 76.00mil "" "1" "square"]
 	Pad[60.00mil -5.00mil 60.00mil 5.00mil 60.00mil 30.00mil 76.00mil "" "2" "square"]
@@ -1808,7 +1808,7 @@ Element["" "1206" "RSENSE2" "unknown" 2505.00mil 1850.00mil -85.00mil -85.00mil 
 
 	)
 
-Element["" "1206" "RSENSE1" "unknown" 1390.00mil 2190.00mil 95.00mil -25.00mil 0 80 ""]
+Element["" "1206" "RSENSE1" "0.05" 1390 2190 95.00mil -25.00mil 0 80 ""]
 (
 	Pad[60.00mil -5.00mil 60.00mil 5.00mil 60.00mil 30.00mil 76.00mil "" "1" "square"]
 	Pad[-60.00mil -5.00mil -60.00mil 5.00mil 60.00mil 30.00mil 76.00mil "" "2" "square"]
@@ -1887,7 +1887,7 @@ Element["" "SOD123" "Z1" "15V" 1790.00mil 2970.00mil 120.00mil 0.0000 3 100 ""]
 
 	)
 
-Element["" "SOT23" "Q4" "BSS138" 1815.00mil 2300.00mil -123.00mil 110.00mil 1 100 ""]
+Element["" "SOT23" "Q4" "2N7002" 1815 2300 -123.00mil 110.00mil 1 100 ""]
 (
 	Pad[0.0000 -3.00mil 0.0000 3.00mil 34.00mil 30.00mil 40.00mil "G" "G" "square"]
 	Pad[-78.00mil -3.00mil -78.00mil 3.00mil 34.00mil 30.00mil 40.00mil "S" "S" "square"]
