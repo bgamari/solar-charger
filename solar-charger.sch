@@ -58,12 +58,14 @@ C 72400 49900 1 0 1 inductor-1.sym
 {
 T 72200 50400 5 10 0 0 0 6 1
 device=INDUCTOR
-T 72000 50200 5 10 1 1 0 6 1
+T 71800 50200 5 10 1 1 0 6 1
 refdes=L1
 T 72200 50600 5 10 0 0 0 6 1
 symversion=0.1
 T 72400 49900 5 10 0 0 0 0 1
 footprint=bourns-2200ll-vert
+T 71900 50200 5 10 1 1 0 0 1
+value=220u
 }
 C 75800 47500 1 0 0 gnd-1.sym
 C 78500 49500 1 0 1 connector2-1.sym
@@ -106,12 +108,14 @@ C 74400 38600 1 0 0 inductor-1.sym
 {
 T 74600 39100 5 10 0 0 0 0 1
 device=INDUCTOR
-T 74900 38900 5 10 1 1 0 6 1
+T 74700 38900 5 10 1 1 0 6 1
 refdes=L2
 T 74600 39300 5 10 0 0 0 0 1
 symversion=0.1
 T 74400 38600 5 10 0 0 0 0 1
 footprint=bourns-2200ll-vert
+T 74800 38900 5 10 1 1 0 0 1
+value=220u
 }
 C 78600 38200 1 0 1 connector2-1.sym
 {
