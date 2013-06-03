@@ -13,6 +13,15 @@ static const u32 isense1_ch = ADC_CHANNEL3;
 static const u32 vsense2_ch = ADC_CHANNEL21;
 static const u32 isense2_ch = ADC_CHANNEL20;
 
+struct regulator_t {
+  u16 isense;
+  u16 vsense;
+  u32 duty1;
+  u32 duty2;
+};
+
+struct regulator_t chan1;
+
 /*
  * Switching voltage regulator core
  *
@@ -88,7 +97,8 @@ int configure_pwm(u32 timer, enum tim_oc_id oc, u32 period, bool pol, u32 t)
   return 0;
 }
 
-/*
+/* Configure two center-aligned PWM outputs with a relative phase.
+ *
  *             period
  *      ╭────────────────────╮
  * 
@@ -105,11 +115,11 @@ int configure_pwm(u32 timer, enum tim_oc_id oc, u32 period, bool pol, u32 t)
  *      ╰──╯  
  *       dt   
  */
-int configure_ch1(u32 period, u32 ta, u32 tb, u32 dt)
+int configure_2pwm(u32 timer_a, enum tim_oc_id oc_a,
+                   u32 timer_b, enum tim_oc_id oc_b,
+                   u32 slave_trigger_src,
+                   u32 period, u32 ta, u32 tb, u32 dt)
 {
-  u32 timer_a = TIM2; enum tim_oc_id oc_a = TIM_OC3;
-  u32 timer_b = TIM4; enum tim_oc_id oc_b = TIM_OC3;
-  u32 slave_trigger_src = TIM_SMCR_TS_ITR0; /// FIXME
 
   // Configure PWMs independently
   configure_pwm(timer_a, oc_a, period, 1, ta);
@@ -130,6 +140,14 @@ int configure_ch1(u32 period, u32 ta, u32 tb, u32 dt)
 
   timer_enable_counter(timer_a);
   return 0;
+}
+
+int configure_ch1(u32 period, u32 ta, u32 tb, u32 dt)
+{
+  return configure_2pwm(TIM2, TIM_OC3,
+                        TIM4, TIM_OC3,
+                        TIM_SMCR_TS_ITR0,
+                        period, ta, tb, td);
 }
 
 void enable_ch1(void)
