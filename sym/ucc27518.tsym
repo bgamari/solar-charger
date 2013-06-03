@@ -20,8 +20,8 @@ pinwidthhorizontal=400
 # if you have a device with slots, you'll have to use slot= and slotdef=
 # use comment= if there are special information you want to add
 version=20060113 1
-name=UCC27518
-device=UCC27518
+name=UCC27517
+device=UCC27517
 refdes=U?
 footprint=SOT23-5
 description=MOSFET driver
