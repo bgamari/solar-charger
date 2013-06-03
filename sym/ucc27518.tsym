@@ -43,8 +43,8 @@ numslots=0
 #-----------------------------------------------------
 #pinnr	seq	type	style	posit.	net	label	
 #-----------------------------------------------------
-1		pwr	line	l		EN
+1		pwr	line	t		VDD
 2		pwr	line	b		GND
-3		pwr	line	l		IN
-4		pwr	line	r		OUT
-5		pwr	line	t		VDD
+3		in	line	l		IN+
+4		in	line	l		IN-
+5		out	line	r		OUT
