@@ -185,11 +185,11 @@ int configure_ch1(u32 period, u32 ta, u32 tb, u32 dt)
 
 void enable_ch1(void)
 {
+  set_vsense1_en(true);
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM4EN);
   reg_state |= ch1_enabled;
   setup_common_peripherals();
-  set_vsense1_en(true);
 }
 
 void disable_ch1(void)
