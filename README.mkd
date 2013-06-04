@@ -6,16 +6,12 @@
   pin      mode     signal       name              description
   ----     -----    -------      ------------      -------------
   `PA0`    out      `PA0`        `LED7`            indicator LED
-  `PA1`    out      `PA1`        `CH1_EN_B`        MOSFET driver enable
   `PA3`    analog   `ADC_IN3`    `ISENSE1`         current sense input
-  `PA4`    out      `PA4`        `VSENSE1_EN`      MOSFET driver enable
-  `PA5`    analog   `ADC_IN5`    `VSENSE1`         voltage sense input
+  `PA4`    analog   `ADC_IN4`    `VSENSE1`         voltage sense input
+  `PA5`    out      `PA5`        `VSENSE1_EN`      voltage sense enable
   `PA6`    af2      `TIM3_CH1`   `CH2_BATT_IN`     switch PWM
-  `PA7`    out      `PA7`        `CH2_BATT_EN`     MOSFET driver enable
   `PB0`    af2      `TIM3_CH3`   `CH2_PANEL_IN`    switch PWM
-  `PB1`    out      `PB1`        `CH2_PANEL_EN`    MOSFET driver enable
   `PB10`   af2      `TIM2_CH3`   `CH1_IN_A`        switch PWM
-  `PB11`   out      `PB11`       `CH1_EN_A`        MOSFET driver enable
   `PB12`   analog   `ADC_IN18`   `VTH`             thermistor input
   `PB14`   analog   `ADC_IN20`   `ISENSE2`         current sense input
   `PB15`   analog   `ADC_IN21`   `VSENSE2`         voltage sense input
