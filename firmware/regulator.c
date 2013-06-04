@@ -196,6 +196,7 @@ void disable_ch2(void)
 
 void adc_jeoc_irqhandler(void)
 {
+  ADC1_SR &= ~ADC_SR_JEOC;
   chan1.vsense = adc_read_injected(ADC1, ADC1_JDR1);
   chan1.isense = adc_read_injected(ADC1, ADC1_JDR2);
   chan2.vsense = adc_read_injected(ADC1, ADC1_JDR3);
