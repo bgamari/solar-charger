@@ -22,6 +22,14 @@ struct regulator_t {
 
 struct regulator_t chan1;
 
+static void set_vsense1_en(bool enabled)
+{
+  if (enabled) {
+    gpio_set(GPIOA, GPIO5);
+  } else
+    gpio_clear(GPIOA, GPIO5);
+}
+
 /*
  * Switching voltage regulator core
  *
@@ -32,7 +40,7 @@ struct regulator_t chan1;
  *  == Common peripherals ==
  *
  *   ADC1:   Sample voltages and current sense
- *   TIM6:   ADC trigger
+ *   TIM9:   ADC trigger
  *   GPIOA:  MOSFET driver enable
  * 
  *  == Channel 1 peripherals ==
@@ -50,16 +58,16 @@ static void setup_common_peripherals(void)
 {
   u8 sequence[] = { vsense1_ch, isense1_ch, vsense2_ch, isense2_ch };
 
-  if (reg_state == 0) {
-    rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM6EN);
+  if (reg_state == 0x0) {
+    rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB2ENR_TIM9EN);
     rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB2ENR_ADC1EN);
   } else {
-    rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM6EN);
+    rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB2ENR_TIM9EN);
     rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB2ENR_ADC1EN);
 
     adc_power_on(ADC1);
     adc_enable_external_trigger_injected(ADC1, ADC_CR2_JEXTEN_RISING,
-                                         ADC_CR2_JEXTSEL_TIM6_TRGO);
+                                         ADC_CR2_JEXTSEL_TIM9_TRGO);
     adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_48CYC);
     //adc_set_resolution(ADC1, ADC_CR1_RES_12BIT);
     adc_enable_eoc_interrupt_injected(ADC1);
@@ -115,10 +123,10 @@ int configure_pwm(u32 timer, enum tim_oc_id oc, u32 period, bool pol, u32 t)
  *      ╰──╯  
  *       dt   
  */
-int configure_2pwm(u32 timer_a, enum tim_oc_id oc_a,
-                   u32 timer_b, enum tim_oc_id oc_b,
-                   u32 slave_trigger_src,
-                   u32 period, u32 ta, u32 tb, u32 dt)
+int configure_dual_pwm(u32 timer_a, enum tim_oc_id oc_a,
+                       u32 timer_b, enum tim_oc_id oc_b,
+                       u32 slave_trigger_src,
+                       u32 period, u32 ta, u32 tb, u32 dt)
 {
 
   // Configure PWMs independently
@@ -144,10 +152,10 @@ int configure_2pwm(u32 timer_a, enum tim_oc_id oc_a,
 
 int configure_ch1(u32 period, u32 ta, u32 tb, u32 dt)
 {
-  return configure_2pwm(TIM2, TIM_OC3,
-                        TIM4, TIM_OC3,
-                        TIM_SMCR_TS_ITR0,
-                        period, ta, tb, td);
+  return configure_dual_pwm(TIM2, TIM_OC3,
+                            TIM4, TIM_OC3,
+                            TIM_SMCR_TS_ITR0,
+                            period, ta, tb, dt);
 }
 
 void enable_ch1(void)
@@ -156,6 +164,7 @@ void enable_ch1(void)
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM4EN);
   reg_state |= ch1_enabled;
   setup_common_peripherals();
+  set_vsense1_en(true);
 }
 
 void disable_ch1(void)
@@ -164,6 +173,7 @@ void disable_ch1(void)
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM4EN);
   reg_state &= ~ch1_enabled;
   setup_common_peripherals();
+  set_vsense1_en(false);
 }
 
 static void configure_ch2(void)
@@ -184,12 +194,10 @@ void disable_ch2(void)
   setup_common_peripherals();
 }
 
-void adc_eoc_irqhandler(void)
-{
-  // TODO
-}
-
 void adc_jeoc_irqhandler(void)
 {
-  // TODO
+  chan1.vsense = adc_read_injected(ADC1, ADC1_JDR1);
+  chan1.isense = adc_read_injected(ADC1, ADC1_JDR2);
+  chan2.vsense = adc_read_injected(ADC1, ADC1_JDR3);
+  chan2.isense = adc_read_injected(ADC1, ADC1_JDR4);
 }
