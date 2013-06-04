@@ -13,14 +13,39 @@ static const u32 isense1_ch = ADC_CHANNEL3;
 static const u32 vsense2_ch = ADC_CHANNEL21;
 static const u32 isense2_ch = ADC_CHANNEL20;
 
+typedef unsigned long fixed_u32;
+
+enum feedback_mode {
+  current_fb, voltage_fb
+};
+
 struct regulator_t {
   u16 isense;
   u16 vsense;
   u32 duty1;
   u32 duty2;
+  u32 vsense_gain; // codepoints per volt
+  u32 isense_gain; // codepoints per amp
+  enum feedback_mode mode;
+  u16 vsetpoint, isetpoint;
+  u16 max_v, max_i;
 };
 
-struct regulator_t chan1, chan2;
+struct regulator_t chan1 = {
+  .mode = current_fb,
+  .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
+  .isense_gain = (1<<12) * (3.3 / 0.05 / 100),
+  .max_v = 0xffff,
+  .max_i = 0xffff,
+};
+
+struct regulator_t chan2 = {
+  .mode = voltage_fb,
+  .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
+  .isense_gain = (1<<12) / (3.3 / 0.05 / 50),
+  .max_v = 0xffff,
+  .max_i = 0xffff,
+};
 
 static void set_vsense1_en(bool enabled)
 {
