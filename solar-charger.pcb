@@ -5,11 +5,11 @@ FileVersion[20091103]
 
 PCB["solar-charger" 6000.00mil 5000.00mil]
 
-Grid[500.000000 0.0000 0.0000 0]
+Grid[1000.000000 0.0000 0.0000 0]
 PolyArea[200000000.000000]
 Thermal[0.500000]
 DRC[6.00mil 10.00mil 6.00mil 10.00mil 15.00mil 8.00mil]
-Flags("showdrc,rubberband,nameonpcb,clearnew,snappin,locknames")
+Flags("showdrc,rubberband,nameonpcb,clearnew,snappin,onlynames")
 Groups("1,c:2,4,s:3:5:6:7:8")
 Styles["Signal,10.00mil,36.00mil,20.00mil,10.00mil:Power,25.00mil,60.00mil,35.00mil,10.00mil:Fat,80.00mil,60.00mil,35.00mil,10.00mil:Skinny,6.00mil,24.02mil,11.81mil,6.00mil"]
 
@@ -786,7 +786,7 @@ Symbol['~' 12.00mil]
 	SymbolLine[20.00mil 35.00mil 25.00mil 30.00mil 8.00mil]
 )
 Attribute("PCB::grid::unit" "mil")
-Attribute("PCB::grid::size" "5.00mil")
+Attribute("PCB::grid::size" "10.00mil")
 Via[1650.00mil 2950.00mil 60.00mil 20.00mil 0.0000 35.00mil "" "thermal(3X)"]
 Via[1710.00mil 3030.00mil 60.00mil 20.00mil 0.0000 35.00mil "" "thermal(3X)"]
 Via[1650.00mil 3010.00mil 60.00mil 20.00mil 0.0000 35.00mil "" "thermal(3X)"]
@@ -909,7 +909,7 @@ Element["" "0603" "C3" "unknown" 44.6161mm 2875.00mil -130.11mil -1.1270mm 0 100
 
 	)
 
-Element["selected" "SOT669-PSMN0R9-25YLC" "Q2" "unknown" 2350.00mil 67.6550mm -40.00mil 130.00mil 0 100 ""]
+Element["" "SOT669-PSMN0R9-25YLC" "Q2" "unknown" 2350.00mil 67.6550mm -40.00mil 130.00mil 0 100 ""]
 (
 	Pad[-1.8500mm 1.5500mm -1.8500mm 3.0500mm 0.5500mm 20.00mil 1.0580mm "S" "S" "square,edge2"]
 	Pad[-0.6000mm 1.5500mm -0.6000mm 3.0500mm 0.5500mm 20.00mil 1.0580mm "S" "S" "square,edge2"]
@@ -946,7 +946,7 @@ Element["" "0603" "C5" "unknown" 1935.00mil 2490.00mil -3.4806mm -0.8730mm 0 100
 
 	)
 
-Element["selected" "SOT669-PSMN0R9-25YLC" "Q5" "unknown" 1975.00mil 59.0750mm -50.00mil -4.8660mm 0 100 ""]
+Element["" "SOT669-PSMN0R9-25YLC" "Q5" "unknown" 1975.00mil 59.0750mm -50.00mil -4.8660mm 0 100 ""]
 (
 	Pad[1.8500mm -3.0500mm 1.8500mm -1.5500mm 0.5500mm 20.00mil 1.0580mm "S" "S" "square"]
 	Pad[0.6000mm -3.0500mm 0.6000mm -1.5500mm 0.5500mm 20.00mil 1.0580mm "S" "S" "square"]
@@ -961,7 +961,7 @@ Element["selected" "SOT669-PSMN0R9-25YLC" "Q5" "unknown" 1975.00mil 59.0750mm -5
 
 	)
 
-Element["selected" "SOT669-PSMN0R9-25YLC" "Q6" "unknown" 2175.00mil 59.0750mm 20.00mil -4.8660mm 0 100 ""]
+Element["" "SOT669-PSMN0R9-25YLC" "Q6" "unknown" 2175.00mil 59.0750mm 20.00mil -4.8660mm 0 100 ""]
 (
 	Pad[1.8500mm -3.0500mm 1.8500mm -1.5500mm 0.5500mm 20.00mil 1.0580mm "S" "S" "square"]
 	Pad[0.6000mm -3.0500mm 0.6000mm -1.5500mm 0.5500mm 20.00mil 1.0580mm "S" "S" "square"]
@@ -1308,7 +1308,7 @@ Element["" "0603" "R2" "unknown" 33.8699mm 1700.00mil -1.4486mm -2.6510mm 0 100 
 
 	)
 
-Element["found,selected" "LQFP48_7" "U2" "unknown" 1875.00mil 1625.00mil 150.00mil -190.00mil 0 100 ""]
+Element["found" "LQFP48_7" "U2" "unknown" 1875.00mil 1625.00mil 150.00mil -190.00mil 0 100 ""]
 (
 	Pad[-182.28mil -2.7498mm -148.30mil -2.7498mm 11.02mil 30.00mil 14.02mil "1" "1" "square"]
 	Pad[-182.28mil -88.58mil -148.30mil -88.58mil 11.02mil 30.00mil 14.02mil "2" "2" "square"]
@@ -1428,7 +1428,7 @@ Element["" "RCY100P" "C6" "unknown" 1475.00mil 2340.00mil -205.00mil -95.00mil 0
 
 	)
 
-Element["found,selected" "SOT669-PSMN0R9-25YLC" "Q3" "unknown" 1425.00mil 2775.00mil 50.00mil 100.00mil 0 100 ""]
+Element["found" "SOT669-PSMN0R9-25YLC" "Q3" "unknown" 1425.00mil 2775.00mil 50.00mil 100.00mil 0 100 ""]
 (
 	Pad[-3.0500mm -1.8500mm -1.5500mm -1.8500mm 0.5500mm 20.00mil 1.0580mm "S" "S" "square"]
 	Pad[-3.0500mm -0.6000mm -1.5500mm -0.6000mm 0.5500mm 20.00mil 1.0580mm "S" "S" "square"]
@@ -1680,7 +1680,7 @@ Element["" "0603" "R18" "unknown" 65.6199mm 2140.00mil 12.97mil 35.63mil 0 100 "
 
 	)
 
-Element["" "0603" "R17" "unknown" 2680.00mil 2440.00mil 46.81mil 0.3970mm 0 100 ""]
+Element["" "0603" "R17" "unknown" 2680.00mil 2440.00mil -43.19mil 1.9210mm 0 100 ""]
 (
 	Pad[0.0000 31.49mil 0.0000 35.43mil 39.37mil 20.00mil 45.37mil "input" "1" "square,edge2"]
 	Pad[0.0000 -35.43mil 0.0000 -31.49mil 39.37mil 20.00mil 45.37mil "input" "2" "square"]
@@ -1704,7 +1704,7 @@ Element["" "JUMPER2" "THERM" "unknown" 2640.00mil 2295.00mil -110.00mil 70.00mil
 
 	)
 
-Element["" "0603" "C18" "unknown" 2600.00mil 2440.00mil -120.11mil 0.3970mm 0 100 ""]
+Element["" "0603" "C18" "unknown" 2600.00mil 2440.00mil -130.11mil -1.3810mm 0 100 ""]
 (
 	Pad[0.0000 31.49mil 0.0000 35.43mil 39.37mil 20.00mil 45.37mil "input" "1" "square,edge2"]
 	Pad[0.0000 -35.43mil 0.0000 -31.49mil 39.37mil 20.00mil 45.37mil "input" "2" "square"]
@@ -1957,6 +1957,17 @@ Element["" "SOT23-5" "U8" "unknown" 2060.00mil 2050.00mil 16.50mil 77.50mil 0 10
 	ElementLine [-61.00mil -17.50mil -22.00mil -17.50mil 10.00mil]
 	ElementLine [-61.00mil -17.50mil -61.00mil 17.50mil 10.00mil]
 	ElementLine [-61.00mil 17.50mil -22.00mil 17.50mil 10.00mil]
+
+	)
+
+Element["" "0603" "C25" "0.1u" 2760.00mil 2440.00mil -20.11mil 1.9210mm 0 100 ""]
+(
+	Pad[0.0000 31.49mil 0.0000 35.43mil 39.37mil 20.00mil 45.37mil "input" "1" "square,edge2"]
+	Pad[0.0000 -35.43mil 0.0000 -31.49mil 39.37mil 20.00mil 45.37mil "input" "2" "square"]
+	ElementLine [-34.68mil 70.11mil 34.68mil 70.11mil 10.00mil]
+	ElementLine [-34.68mil -70.11mil -34.68mil 70.11mil 10.00mil]
+	ElementLine [-34.68mil -70.11mil 34.68mil -70.11mil 10.00mil]
+	ElementLine [34.68mil -70.11mil 34.68mil 70.11mil 10.00mil]
 
 	)
 Layer(1 "component")
@@ -2256,8 +2267,6 @@ Layer(1 "component")
 	Line[2550.00mil 2240.00mil 2550.00mil 59.8561mm 10.00mil 20.00mil "clearline"]
 	Line[2550.00mil 59.8561mm 2600.00mil 61.1261mm 10.00mil 20.00mil "clearline"]
 	Line[2023.00mil 2928.00mil 2023.00mil 2982.00mil 25.00mil 20.00mil "clearline"]
-	Line[2740.00mil 2295.00mil 2845.00mil 2295.00mil 25.00mil 20.00mil "clearline"]
-	Line[2845.00mil 2295.00mil 2850.00mil 2300.00mil 25.00mil 20.00mil "clearline"]
 	Line[45.3751mm 45.4734mm 45.3751mm 46.3189mm 10.00mil 20.00mil "clearline"]
 	Line[45.3751mm 46.3189mm 1730.00mil 1880.00mil 10.00mil 20.00mil "clearline"]
 	Line[1730.00mil 1880.00mil 1730.00mil 2050.00mil 10.00mil 20.00mil "clearline"]
@@ -2396,6 +2405,12 @@ Layer(1 "component")
 	Line[1387.00mil 2548.50mil 35.2234mm 64.7255mm 25.00mil 20.00mil "clearline"]
 	Line[1780.00mil 1710.00mil 1780.00mil 1685.00mil 25.00mil 20.00mil "clearline"]
 	Line[1858.00mil 2015.00mil 1858.00mil 2066.50mil 25.00mil 20.00mil "clearline"]
+	Line[2760.00mil 62.8259mm 2680.00mil 62.8259mm 10.00mil 20.00mil "clearline"]
+	Line[2680.00mil 62.8259mm 67.9890mm 62.9089mm 10.00mil 20.00mil "clearline"]
+	Line[2760.00mil 61.1261mm 2760.00mil 2315.00mil 10.00mil 20.00mil "clearline"]
+	Line[2760.00mil 2315.00mil 2740.00mil 2295.00mil 10.00mil 20.00mil "clearline"]
+	Line[2760.00mil 61.1261mm 72.2239mm 61.1261mm 10.00mil 20.00mil "clearline"]
+	Line[72.2239mm 61.1261mm 2850.00mil 2400.00mil 10.00mil 20.00mil "clearline"]
 )
 Layer(2 "solder")
 (
@@ -2540,6 +2555,7 @@ NetList()
 		Connect("C13-2")
 		Connect("C19-2")
 		Connect("C20-2")
+		Connect("C25-2")
 		Connect("LED0-1")
 		Connect("LED1-1")
 		Connect("LED2-1")
@@ -2636,6 +2652,7 @@ NetList()
 		Connect("C22-1")
 		Connect("C23-1")
 		Connect("C24-1")
+		Connect("C25-1")
 		Connect("D3-2")
 		Connect("D5-2")
 		Connect("IN-2")
