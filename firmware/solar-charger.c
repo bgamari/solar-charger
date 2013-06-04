@@ -89,4 +89,5 @@ void exti_handler(void)
     button2_pressed();
   else if (exti_get_flag_status(EXTI11))
     button1_pressed();
+  EXTI_PR |= EXTI8 | EXTI10 | EXTI11;
 }

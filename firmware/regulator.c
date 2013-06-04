@@ -20,7 +20,7 @@ struct regulator_t {
   u32 duty2;
 };
 
-struct regulator_t chan1;
+struct regulator_t chan1, chan2;
 
 static void set_vsense1_en(bool enabled)
 {
