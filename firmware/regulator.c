@@ -4,10 +4,6 @@
 #include <libopencm3/stm32/l1/adc.h>
 #include "regulator.h"
 
-static u8 reg_state = 0;
-static const u8 ch1_enabled = 0x1;
-static const u8 ch2_enabled = 0x2;
-
 static const u32 vsense1_ch = ADC_CHANNEL5;
 static const u32 isense1_ch = ADC_CHANNEL3;
 static const u32 vsense2_ch = ADC_CHANNEL21;
@@ -25,6 +21,7 @@ enum feedback_mode {
  * channel feedback loop. 
  */
 struct regulator_t {
+  bool enabled;
   uint32_t vsense_gain; // codepoints per volt
   uint32_t isense_gain; // codepoints per amp
   uint32_t period;
@@ -91,7 +88,7 @@ static void setup_common_peripherals(void)
 {
   u8 sequence[] = { vsense1_ch, isense1_ch, vsense2_ch, isense2_ch };
 
-  if (reg_state == 0x0) {
+  if (!chan1.enabled && !chan2.enabled) {
     rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB2ENR_TIM9EN);
     rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB2ENR_ADC1EN);
   } else {
@@ -188,28 +185,30 @@ void set_pwm_duty(u32 timer, enum tim_oc_id oc, u32 t)
   timer_set_oc_value(timer, oc, t);
 }
 
-int configure_ch1(u32 period, u32 ta, u32 tb, u32 dt)
+int configure_ch1(u32 dt)
 {
+  uint32_t ta = chan1.period * chan1.duty1 / 0xffff;
+  uint32_t tb = chan1.period * chan1.duty2 / 0xffff;
   return configure_dual_pwm(TIM2, TIM_OC3,
                             TIM4, TIM_OC3,
                             TIM_SMCR_TS_ITR0,
-                            period, ta, tb, dt);
+                            chan1.period, ta, tb, dt);
 }
 
 void enable_ch1(void)
 {
+  chan1.enabled = true;
   set_vsense1_en(true);
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM4EN);
-  reg_state |= ch1_enabled;
   setup_common_peripherals();
 }
 
 void disable_ch1(void)
 {
+  chan1.enabled = false;
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM4EN);
-  reg_state &= ~ch1_enabled;
   setup_common_peripherals();
   set_vsense1_en(false);
 }
@@ -244,21 +243,24 @@ static void feedback_ch1(void)
   set_pwm_duty(TIM4, TIM_OC3, chan1.duty2);
 }
 
-static void configure_ch2(void)
+int configure_ch2(bool battery)
 {
+  enum tim_oc_id src = battery ? TIM_OC1 : TIM_OC3;
+  uint32_t t = chan2.period * chan2.duty1 / 0xffff;
+  return configure_pwm(TIM2, src, chan2.period, true, t);
 }
  
 void enable_ch2(void)
 {
+  chan2.enabled = true;
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
-  reg_state |= ch2_enabled;
   setup_common_peripherals();
 }
 
 void disable_ch2(void)
 {
+  chan2.enabled = false;
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
-  reg_state &= ~ch2_enabled;
   setup_common_peripherals();
 }
 
