@@ -13,38 +13,46 @@ static const u32 isense1_ch = ADC_CHANNEL3;
 static const u32 vsense2_ch = ADC_CHANNEL21;
 static const u32 isense2_ch = ADC_CHANNEL20;
 
-typedef unsigned long fixed_u32;
+typedef unsigned long fixed32; // 16.16 fixed point
+typedef unsigned long fixedn32; // 0.32 fixed point
 
 enum feedback_mode {
-  current_fb, voltage_fb
+  current_fb, voltage_fb, power_fb
 };
 
+/*
+ * This ties together the various parameters needed by a single
+ * channel feedback loop. 
+ */
 struct regulator_t {
-  u16 isense;
-  u16 vsense;
-  u32 duty1;
-  u32 duty2;
-  u32 vsense_gain; // codepoints per volt
-  u32 isense_gain; // codepoints per amp
+  uint32_t vsense_gain; // codepoints per volt
+  uint32_t isense_gain; // codepoints per amp
+  uint32_t period;
+  fixedn32 duty1;
+  fixedn32 duty2;
+  uint16_t isense;
+  uint16_t vsense;
   enum feedback_mode mode;
-  u16 vsetpoint, isetpoint;
-  u16 max_v, max_i;
+  uint16_t vsetpoint, vlimit; // in codepoints, only used in current_fb mode
+  uint16_t isetpoint, ilimit; // in codepoints, only used in voltage_fb mode
 };
 
 struct regulator_t chan1 = {
+  .period = 0xf000,
   .mode = current_fb,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) * (3.3 / 0.05 / 100),
-  .max_v = 0xffff,
-  .max_i = 0xffff,
+  .vlimit = 0xffff,
+  .ilimit = 0xffff,
 };
 
 struct regulator_t chan2 = {
+  .period = 0xf000,
   .mode = voltage_fb,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) / (3.3 / 0.05 / 50),
-  .max_v = 0xffff,
-  .max_i = 0xffff,
+  .vlimit = 0xffff,
+  .ilimit = 0xffff,
 };
 
 static void set_vsense1_en(bool enabled)
@@ -175,6 +183,11 @@ int configure_dual_pwm(u32 timer_a, enum tim_oc_id oc_a,
   return 0;
 }
 
+void set_pwm_duty(u32 timer, enum tim_oc_id oc, u32 t)
+{
+  timer_set_oc_value(timer, oc, t);
+}
+
 int configure_ch1(u32 period, u32 ta, u32 tb, u32 dt)
 {
   return configure_dual_pwm(TIM2, TIM_OC3,
@@ -199,6 +212,36 @@ void disable_ch1(void)
   reg_state &= ~ch1_enabled;
   setup_common_peripherals();
   set_vsense1_en(false);
+}
+
+static void feedback_ch1(void)
+{
+  if (chan1.mode == voltage_fb) {
+    if (chan1.isense > chan1.ilimit) {
+      chan1.duty1 /= 2;
+      chan1.duty2 /= 2;
+    } else {
+      s32 error = chan1.vsense - chan1.vsetpoint;
+      u32 p1_gain = 0x10;
+      u32 p2_gain = 0x10;
+      chan1.duty1 += error * p1_gain / 0xffff;
+      chan1.duty2 += error * p2_gain / 0xffff;
+    }
+  } else {
+    if (chan1.vsense > chan1.vlimit) {
+      chan1.duty1 /= 2;
+      chan1.duty2 /= 2;
+    } else {
+      s32 error = chan1.isense - chan1.isetpoint;
+      u32 p1_gain = 0x10;
+      u32 p2_gain = 0x10;
+      chan1.duty1 += error * p1_gain / 0xffff;
+      chan1.duty2 += error * p2_gain / 0xffff;
+    }
+  }
+
+  set_pwm_duty(TIM2, TIM_OC3, chan1.duty1);
+  set_pwm_duty(TIM4, TIM_OC3, chan1.duty2);
 }
 
 static void configure_ch2(void)
@@ -226,4 +269,5 @@ void adc_jeoc_irqhandler(void)
   chan1.isense = adc_read_injected(ADC1, ADC1_JDR2);
   chan2.vsense = adc_read_injected(ADC1, ADC1_JDR3);
   chan2.isense = adc_read_injected(ADC1, ADC1_JDR4);
+  feedback_ch1();
 }
