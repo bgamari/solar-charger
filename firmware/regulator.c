@@ -2,6 +2,7 @@
 #include <libopencm3/stm32/timer.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/l1/adc.h>
+
 #include "regulator.h"
 
 static const u32 vsense1_ch = ADC_CHANNEL5;
@@ -11,10 +12,6 @@ static const u32 isense2_ch = ADC_CHANNEL20;
 
 typedef unsigned int fixed32_t; // 16.16 fixed point
 typedef unsigned int fract32_t; // 0.32 fixed point
-
-enum feedback_mode {
-  disabled, current_fb, voltage_fb, power_fb
-};
 
 /*
  * This ties together the various parameters needed by a single
