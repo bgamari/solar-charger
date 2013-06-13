@@ -13,7 +13,7 @@ typedef unsigned int fixed32_t; // 16.16 fixed point
 typedef unsigned int fract32_t; // 0.32 fixed point
 
 enum feedback_mode {
-  current_fb, voltage_fb, power_fb
+  disabled, current_fb, voltage_fb, power_fb
 };
 
 /*
@@ -21,19 +21,22 @@ enum feedback_mode {
  * channel feedback loop. 
  */
 struct regulator_t {
-  bool enabled;
   uint32_t vsense_gain; // codepoints per volt
   uint32_t isense_gain; // codepoints per amp
-  uint32_t period;
+  uint32_t period; // period in cycles
   fract32_t duty1;
   fract32_t duty2;
-  uint16_t isense;
-  uint16_t vsense;
+  uint16_t isense; // current in codepoints
+  uint16_t vsense; // voltage in codepoints
   enum feedback_mode mode;
   uint16_t vsetpoint, vlimit; // in codepoints, only used in current_fb mode
   uint16_t isetpoint, ilimit; // in codepoints, only used in voltage_fb mode
+  void (*enable_func)(void);
+  void (*disable_func)(void);
 };
 
+static void enable_ch1(void);
+static void disable_ch1(void);
 struct regulator_t chan1 = {
   .period = 0xf000,
   .mode = current_fb,
@@ -41,8 +44,12 @@ struct regulator_t chan1 = {
   .isense_gain = (1<<12) * (3.3 / 0.05 / 100),
   .vlimit = 0xffff,
   .ilimit = 0xffff,
+  .enable_func = enable_ch1,
+  .disable_func = disable_ch1
 };
 
+static void enable_ch2(void);
+static void disable_ch2(void);
 struct regulator_t chan2 = {
   .period = 0xf000,
   .mode = voltage_fb,
@@ -50,6 +57,8 @@ struct regulator_t chan2 = {
   .isense_gain = (1<<12) / (3.3 / 0.05 / 50),
   .vlimit = 0xffff,
   .ilimit = 0xffff,
+  .enable_func = enable_ch2,
+  .disable_func = disable_ch2
 };
 
 static void set_vsense1_en(bool enabled)
@@ -88,7 +97,7 @@ static void setup_common_peripherals(void)
 {
   u8 sequence[] = { vsense1_ch, isense1_ch, vsense2_ch, isense2_ch };
 
-  if (!chan1.enabled && !chan2.enabled) {
+  if (chan1.mode != disabled && chan2.mode != disabled) {
     rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB2ENR_TIM9EN);
     rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB2ENR_ADC1EN);
   } else {
@@ -195,24 +204,32 @@ int configure_ch1(u32 dt)
                             chan1.period, ta, tb, dt);
 }
 
-void enable_ch1(void)
+static void enable_ch1(void)
 {
-  chan1.enabled = true;
   set_vsense1_en(true);
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM4EN);
   setup_common_peripherals();
 }
 
-void disable_ch1(void)
+static void disable_ch1(void)
 {
-  chan1.enabled = false;
   timer_disable_counter(TIM2);
   timer_disable_counter(TIM4);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM4EN);
   setup_common_peripherals();
   set_vsense1_en(false);
+}
+
+void regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
+{
+  if (reg->mode == disabled && mode != disabled)
+    reg->enable_func();
+  else if (mode == disabled) 
+    reg->disable_func();
+
+  reg->mode = mode;
 }
 
 static void feedback_ch1(void)
@@ -254,14 +271,12 @@ int configure_ch2(bool battery)
  
 void enable_ch2(void)
 {
-  chan2.enabled = true;
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
   setup_common_peripherals();
 }
 
 void disable_ch2(void)
 {
-  chan2.enabled = false;
   timer_disable_counter(TIM3);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
   setup_common_peripherals();
