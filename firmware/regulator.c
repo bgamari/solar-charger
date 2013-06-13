@@ -9,8 +9,8 @@ static const u32 isense1_ch = ADC_CHANNEL3;
 static const u32 vsense2_ch = ADC_CHANNEL21;
 static const u32 isense2_ch = ADC_CHANNEL20;
 
-typedef unsigned long fixed32; // 16.16 fixed point
-typedef unsigned long fixedn32; // 0.32 fixed point
+typedef unsigned int fixed32_t; // 16.16 fixed point
+typedef unsigned int fract32_t; // 0.32 fixed point
 
 enum feedback_mode {
   current_fb, voltage_fb, power_fb
@@ -25,8 +25,8 @@ struct regulator_t {
   uint32_t vsense_gain; // codepoints per volt
   uint32_t isense_gain; // codepoints per amp
   uint32_t period;
-  fixedn32 duty1;
-  fixedn32 duty2;
+  fract32_t duty1;
+  fract32_t duty2;
   uint16_t isense;
   uint16_t vsense;
   enum feedback_mode mode;
@@ -158,7 +158,6 @@ int configure_dual_pwm(u32 timer_a, enum tim_oc_id oc_a,
                        u32 slave_trigger_src,
                        u32 period, u32 ta, u32 tb, u32 dt)
 {
-
   // Configure PWMs independently
   configure_pwm(timer_a, oc_a, period, 1, ta);
   configure_pwm(timer_b, oc_b, period, 1, tb);
@@ -187,8 +186,8 @@ void set_pwm_duty(u32 timer, enum tim_oc_id oc, u32 t)
 
 int configure_ch1(u32 dt)
 {
-  uint32_t ta = chan1.period * chan1.duty1 / 0xffff;
-  uint32_t tb = chan1.period * chan1.duty2 / 0xffff;
+  uint32_t ta = ((uint64_t) chan1.period * chan1.duty1) >> 32;
+  uint32_t tb = ((uint64_t) chan1.period * chan1.duty2) >> 32;
   return configure_dual_pwm(TIM2, TIM_OC3,
                             TIM4, TIM_OC3,
                             TIM_SMCR_TS_ITR0,
@@ -222,22 +221,22 @@ static void feedback_ch1(void)
       chan1.duty1 /= 2;
       chan1.duty2 /= 2;
     } else {
-      s32 error = chan1.vsense - chan1.vsetpoint;
-      u32 p1_gain = 0x10;
-      u32 p2_gain = 0x10;
-      chan1.duty1 += error * p1_gain / 0xffff;
-      chan1.duty2 += error * p2_gain / 0xffff;
+      int32_t error = chan1.vsense - chan1.vsetpoint;
+      uint32_t p1_gain = 0x10;
+      uint32_t p2_gain = 0x10;
+      chan1.duty1 += ((uint64_t) error * p1_gain) >> 32;
+      chan1.duty2 += ((uint64_t) error * p2_gain) >> 32;
     }
   } else {
     if (chan1.vsense > chan1.vlimit) {
       chan1.duty1 /= 2;
       chan1.duty2 /= 2;
     } else {
-      s32 error = chan1.isense - chan1.isetpoint;
-      u32 p1_gain = 0x10;
-      u32 p2_gain = 0x10;
-      chan1.duty1 += error * p1_gain / 0xffff;
-      chan1.duty2 += error * p2_gain / 0xffff;
+      int32_t error = chan1.isense - chan1.isetpoint;
+      uint32_t p1_gain = 0x10;
+      uint32_t p2_gain = 0x10;
+      chan1.duty1 += ((uint64_t) error * p1_gain) >> 32;
+      chan1.duty2 += ((uint64_t) error * p2_gain) >> 32;
     }
   }
 
