@@ -179,8 +179,9 @@ int configure_dual_pwm(u32 timer_a, enum tim_oc_id oc_a,
   return 0;
 }
 
-void set_pwm_duty(u32 timer, enum tim_oc_id oc, u32 t)
+void set_pwm_duty(u32 timer, enum tim_oc_id oc, uint32_t period, fract32_t d)
 {
+  uint32_t t = ((uint64_t) d * period) >> 32;
   timer_set_oc_value(timer, oc, t);
 }
 
@@ -222,8 +223,8 @@ static void feedback_ch1(void)
       chan1.duty2 /= 2;
     } else {
       int32_t error = chan1.vsense - chan1.vsetpoint;
-      uint32_t p1_gain = 0x10;
-      uint32_t p2_gain = 0x10;
+      fixed32_t p1_gain = 0x10;
+      fixed32_t p2_gain = 0x10;
       chan1.duty1 += ((uint64_t) error * p1_gain) >> 32;
       chan1.duty2 += ((uint64_t) error * p2_gain) >> 32;
     }
@@ -233,15 +234,15 @@ static void feedback_ch1(void)
       chan1.duty2 /= 2;
     } else {
       int32_t error = chan1.isense - chan1.isetpoint;
-      uint32_t p1_gain = 0x10;
-      uint32_t p2_gain = 0x10;
+      fixed32_t p1_gain = 0x10;
+      fixed32_t p2_gain = 0x10;
       chan1.duty1 += ((uint64_t) error * p1_gain) >> 32;
       chan1.duty2 += ((uint64_t) error * p2_gain) >> 32;
     }
   }
 
-  set_pwm_duty(TIM2, TIM_OC3, chan1.duty1);
-  set_pwm_duty(TIM4, TIM_OC3, chan1.duty2);
+  set_pwm_duty(TIM2, TIM_OC3, chan1.period, chan1.duty1);
+  set_pwm_duty(TIM4, TIM_OC3, chan1.period, chan1.duty2);
 }
 
 int configure_ch2(bool battery)
