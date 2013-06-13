@@ -266,7 +266,7 @@ void disable_ch2(void)
   setup_common_peripherals();
 }
 
-void adc_jeoc_irqhandler(void)
+void adc1_isr(void)
 {
   ADC1_SR &= ~ADC_SR_JEOC;
   chan1.vsense = adc_read_injected(ADC1, ADC1_JDR1);
