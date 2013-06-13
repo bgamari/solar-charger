@@ -59,27 +59,27 @@ flash: $(BINARY).flash
 	@#echo "*** $* images generated ***"
 
 %.bin: %.elf
-	@#printf "  OBJCOPY $(*).bin\n"
+	@printf "  OBJCOPY $(*).bin\n"
 	$(Q)$(OBJCOPY) -Obinary $(*).elf $(*).bin
 
 %.hex: %.elf
-	@#printf "  OBJCOPY $(*).hex\n"
+	@printf "  OBJCOPY $(*).hex\n"
 	$(Q)$(OBJCOPY) -Oihex $(*).elf $(*).hex
 
 %.srec: %.elf
-	@#printf "  OBJCOPY $(*).srec\n"
+	@printf "  OBJCOPY $(*).srec\n"
 	$(Q)$(OBJCOPY) -Osrec $(*).elf $(*).srec
 
 %.list: %.elf
-	@#printf "  OBJDUMP $(*).list\n"
+	@printf "  OBJDUMP $(*).list\n"
 	$(Q)$(OBJDUMP) -S $(*).elf > $(*).list
 
 %.elf: $(OBJS) $(LDSCRIPT) $(TOOLCHAIN_DIR)/lib/libopencm3_stm32l1.a
-	@#printf "  LD      $(subst $(shell pwd)/,,$(@))\n"
+	@printf "  LD      $(subst $(shell pwd)/,,$(@))\n"
 	$(Q)$(LD) -o $(*).elf $(OBJS) -lopencm3_stm32l1 $(LDFLAGS)
 
 %.o: %.c Makefile
-	@#printf "  CC      $(subst $(shell pwd)/,,$(@))\n"
+	@printf "  CC      $(subst $(shell pwd)/,,$(@))\n"
 	$(Q)$(CC) $(CFLAGS) -o $@ -c $<
 
 clean:
