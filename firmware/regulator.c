@@ -207,6 +207,8 @@ void enable_ch1(void)
 void disable_ch1(void)
 {
   chan1.enabled = false;
+  timer_disable_counter(TIM2);
+  timer_disable_counter(TIM4);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM4EN);
   setup_common_peripherals();
@@ -260,6 +262,7 @@ void enable_ch2(void)
 void disable_ch2(void)
 {
   chan2.enabled = false;
+  timer_disable_counter(TIM3);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
   setup_common_peripherals();
 }
