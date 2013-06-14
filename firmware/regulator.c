@@ -26,13 +26,15 @@ struct regulator_t {
   uint16_t isense; // current in codepoints
   uint16_t vsense; // voltage in codepoints
   enum feedback_mode mode;
-  uint16_t vsetpoint, vlimit; // in codepoints, only used in current_fb mode
-  uint16_t isetpoint, ilimit; // in codepoints, only used in voltage_fb mode
+  uint16_t isetpoint, vlimit; // in codepoints, only used in current_fb mode
+  uint16_t vsetpoint, ilimit; // in codepoints, only used in voltage_fb mode
   void (*enable_func)(void);
+  int (*configure_func)(void);
   void (*disable_func)(void);
 };
 
 static void enable_ch1(void);
+static int configure_ch1(void);
 static void disable_ch1(void);
 struct regulator_t chan1 = {
   .period = 0xf000,
@@ -42,6 +44,7 @@ struct regulator_t chan1 = {
   .vlimit = 0xffff,
   .ilimit = 0xffff,
   .enable_func = enable_ch1,
+  .configure_func = configure_ch1,
   .disable_func = disable_ch1
 };
 
@@ -123,7 +126,8 @@ static void setup_common_peripherals(void)
  * 
  * pol = 1
  */
-int configure_pwm(u32 timer, enum tim_oc_id oc, u32 period, bool pol, u32 t)
+static int configure_pwm(u32 timer, enum tim_oc_id oc,
+                         u32 period, bool pol, u32 t)
 {
   timer_reset(timer);
   timer_continuous_mode(timer);
@@ -159,10 +163,10 @@ int configure_pwm(u32 timer, enum tim_oc_id oc, u32 period, bool pol, u32 t)
  *      ╰──╯  
  *       dt   
  */
-int configure_dual_pwm(u32 timer_a, enum tim_oc_id oc_a,
-                       u32 timer_b, enum tim_oc_id oc_b,
-                       u32 slave_trigger_src,
-                       u32 period, u32 ta, u32 tb, u32 dt)
+static int configure_dual_pwm(u32 timer_a, enum tim_oc_id oc_a,
+                              u32 timer_b, enum tim_oc_id oc_b,
+                              u32 slave_trigger_src,
+                              u32 period, u32 ta, u32 tb, u32 dt)
 {
   // Configure PWMs independently
   configure_pwm(timer_a, oc_a, period, 1, ta);
@@ -185,14 +189,15 @@ int configure_dual_pwm(u32 timer_a, enum tim_oc_id oc_a,
   return 0;
 }
 
-void set_pwm_duty(u32 timer, enum tim_oc_id oc, uint32_t period, fract32_t d)
+static void set_pwm_duty(u32 timer, enum tim_oc_id oc, uint32_t period, fract32_t d)
 {
   uint32_t t = ((uint64_t) d * period) >> 32;
   timer_set_oc_value(timer, oc, t);
 }
 
-int configure_ch1(u32 dt)
+static int configure_ch1(void)
 {
+  uint32_t dt = 0x10;
   uint32_t ta = ((uint64_t) chan1.period * chan1.duty1) >> 32;
   uint32_t tb = ((uint64_t) chan1.period * chan1.duty2) >> 32;
   return configure_dual_pwm(TIM2, TIM_OC3,
@@ -219,16 +224,6 @@ static void disable_ch1(void)
   set_vsense1_en(false);
 }
 
-void regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
-{
-  if (reg->mode == disabled && mode != disabled)
-    reg->enable_func();
-  else if (mode == disabled) 
-    reg->disable_func();
-
-  reg->mode = mode;
-}
-
 static void feedback_ch1(void)
 {
   if (chan1.mode == voltage_fb) {
@@ -242,7 +237,7 @@ static void feedback_ch1(void)
       chan1.duty1 += ((uint64_t) error * p1_gain) >> 32;
       chan1.duty2 += ((uint64_t) error * p2_gain) >> 32;
     }
-  } else {
+  } else if (chan1.mode == current_fb) {
     if (chan1.vsense > chan1.vlimit) {
       chan1.duty1 /= 2;
       chan1.duty2 /= 2;
@@ -287,4 +282,47 @@ void adc1_isr(void)
   chan2.vsense = adc_read_injected(ADC1, ADC1_JDR3);
   chan2.isense = adc_read_injected(ADC1, ADC1_JDR4);
   feedback_ch1();
+}
+
+int regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
+{
+  int ret;
+
+  if (reg->mode == disabled && mode != disabled)
+    reg->enable_func();
+  else if (mode == disabled) 
+    reg->disable_func();
+
+  if (mode != disabled) {
+    ret = reg->configure_func();
+    if (ret != 0) return ret;
+  }
+
+  reg->mode = mode;
+  return 0;
+}
+
+int regulator_set_duty_cycle(struct regulator_t *reg, float d1, float d2)
+{
+  if (reg->mode != const_duty)
+    return 1;
+  reg->duty1 = 0xffff * d1;
+  reg->duty2 = 0xffff * d2;
+  return 0;
+}
+
+int regulator_set_vsetpoint(struct regulator_t *reg, float setpoint)
+{
+  uint16_t v = ((uint32_t) (reg->vsense_gain * setpoint) >> 16);
+  if (v > reg->vlimit) return 1;
+  reg->vsetpoint = v;
+  return 0;
+}
+
+int regulator_set_isetpoint(struct regulator_t *reg, float setpoint)
+{
+  uint16_t i = ((uint32_t) (reg->isense_gain * setpoint) >> 16);
+  if (i > reg->ilimit) return 1;
+  reg->isetpoint = i;
+  return 0;
 }
