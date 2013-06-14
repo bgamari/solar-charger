@@ -13,6 +13,8 @@ static const u32 isense2_ch = ADC_CHANNEL20;
 typedef unsigned int fixed32_t; // 16.16 fixed point
 typedef unsigned int fract32_t; // 0.32 fixed point
 
+static enum tim_oc_id ch2_oc;
+
 /*
  * This ties together the various parameters needed by a single
  * channel feedback loop. 
@@ -36,6 +38,7 @@ struct regulator_t {
 static void enable_ch1(void);
 static int configure_ch1(void);
 static void disable_ch1(void);
+
 struct regulator_t chan1 = {
   .period = 0xf000,
   .mode = current_fb,
@@ -49,7 +52,9 @@ struct regulator_t chan1 = {
 };
 
 static void enable_ch2(void);
+static int configure_ch2(void);
 static void disable_ch2(void);
+
 struct regulator_t chan2 = {
   .period = 0xf000,
   .mode = voltage_fb,
@@ -58,6 +63,7 @@ struct regulator_t chan2 = {
   .vlimit = 0xffff,
   .ilimit = 0xffff,
   .enable_func = enable_ch2,
+  .configure_func = configure_ch2,
   .disable_func = disable_ch2
 };
 
@@ -226,7 +232,9 @@ static void disable_ch1(void)
 
 static void feedback_ch1(void)
 {
-  if (chan1.mode == voltage_fb) {
+  if (chan1.mode == disabled) {
+    return;
+  } else if (chan1.mode == voltage_fb) {
     if (chan1.isense > chan1.ilimit) {
       chan1.duty1 /= 2;
       chan1.duty2 /= 2;
@@ -254,24 +262,56 @@ static void feedback_ch1(void)
   set_pwm_duty(TIM4, TIM_OC3, chan1.period, chan1.duty2);
 }
 
-int configure_ch2(bool battery)
+void regulator_set_ch2_source(enum ch2_source_t src)
 {
-  enum tim_oc_id src = battery ? TIM_OC1 : TIM_OC3;
+  ch2_oc = (src == BATTERY) ? TIM_OC1 : TIM_OC3;
+  configure_ch2();
+}
+
+static int configure_ch2()
+{
   uint32_t t = chan2.period * chan2.duty1 / 0xffff;
-  return configure_pwm(TIM2, src, chan2.period, true, t);
+  timer_disable_oc_output(TIM2, TIM_OC1);
+  timer_disable_oc_output(TIM2, TIM_OC3);
+  return configure_pwm(TIM2, ch2_oc, chan2.period, true, t);
 }
  
-void enable_ch2(void)
+static void enable_ch2(void)
 {
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
   setup_common_peripherals();
 }
 
-void disable_ch2(void)
+static void disable_ch2(void)
 {
   timer_disable_counter(TIM3);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
   setup_common_peripherals();
+}
+
+static void feedback_ch2(void)
+{
+  if (chan2.mode == disabled) {
+    return;
+  } else if (chan2.mode == voltage_fb) {
+    if (chan2.isense > chan2.ilimit) {
+      chan2.duty1 /= 2;
+    } else {
+      int32_t error = chan2.vsense - chan2.vsetpoint;
+      fixed32_t p1_gain = 0x10;
+      chan2.duty1 += ((uint64_t) error * p1_gain) >> 32;
+    }
+  } else if (chan2.mode == current_fb) {
+    if (chan2.vsense > chan1.vlimit) {
+      chan2.duty1 /= 2;
+    } else {
+      int32_t error = chan2.isense - chan2.isetpoint;
+      fixed32_t p1_gain = 0x10;
+      chan2.duty1 += ((uint64_t) error * p1_gain) >> 32;
+    }
+  }
+
+  set_pwm_duty(TIM2, TIM_OC3, chan2.period, chan2.duty1);
 }
 
 void adc1_isr(void)
@@ -282,6 +322,7 @@ void adc1_isr(void)
   chan2.vsense = adc_read_injected(ADC1, ADC1_JDR3);
   chan2.isense = adc_read_injected(ADC1, ADC1_JDR4);
   feedback_ch1();
+  feedback_ch2();
 }
 
 int regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
@@ -325,4 +366,9 @@ int regulator_set_isetpoint(struct regulator_t *reg, float setpoint)
   if (i > reg->ilimit) return 1;
   reg->isetpoint = i;
   return 0;
+}
+
+void regulator_init(void)
+{
+  regulator_set_ch2_source(INPUT);
 }
