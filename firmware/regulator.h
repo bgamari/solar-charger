@@ -3,7 +3,7 @@ extern struct regulator_t chan1;
 extern struct regulator_t chan2;
 
 enum feedback_mode {
-  disabled, const_duty, current_fb, voltage_fb, power_fb
+  DISABLED, CONST_DUTY, CURRENT_FB, VOLTAGE_FB, MAX_POWER
 };
 
 enum ch2_source_t { BATTERY, INPUT };

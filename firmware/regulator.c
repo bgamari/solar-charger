@@ -41,7 +41,7 @@ static void disable_ch1(void);
 
 struct regulator_t chan1 = {
   .period = 0xf000,
-  .mode = current_fb,
+  .mode = CURRENT_FB,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) * (3.3 / 0.05 / 100),
   .vlimit = 0xffff,
@@ -57,7 +57,7 @@ static void disable_ch2(void);
 
 struct regulator_t chan2 = {
   .period = 0xf000,
-  .mode = voltage_fb,
+  .mode = VOLTAGE_FB,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) / (3.3 / 0.05 / 50),
   .vlimit = 0xffff,
@@ -103,7 +103,7 @@ static void setup_common_peripherals(void)
 {
   u8 sequence[] = { vsense1_ch, isense1_ch, vsense2_ch, isense2_ch };
 
-  if (chan1.mode != disabled && chan2.mode != disabled) {
+  if (chan1.mode != DISABLED && chan2.mode != DISABLED) {
     rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB2ENR_TIM9EN);
     rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB2ENR_ADC1EN);
   } else {
@@ -232,9 +232,9 @@ static void disable_ch1(void)
 
 static void feedback_ch1(void)
 {
-  if (chan1.mode == disabled) {
+  if (chan1.mode == DISABLED) {
     return;
-  } else if (chan1.mode == voltage_fb) {
+  } else if (chan1.mode == VOLTAGE_FB) {
     if (chan1.isense > chan1.ilimit) {
       chan1.duty1 /= 2;
       chan1.duty2 /= 2;
@@ -245,7 +245,7 @@ static void feedback_ch1(void)
       chan1.duty1 += ((uint64_t) error * p1_gain) >> 32;
       chan1.duty2 += ((uint64_t) error * p2_gain) >> 32;
     }
-  } else if (chan1.mode == current_fb) {
+  } else if (chan1.mode == CURRENT_FB) {
     if (chan1.vsense > chan1.vlimit) {
       chan1.duty1 /= 2;
       chan1.duty2 /= 2;
@@ -291,9 +291,9 @@ static void disable_ch2(void)
 
 static void feedback_ch2(void)
 {
-  if (chan2.mode == disabled) {
+  if (chan2.mode == DISABLED) {
     return;
-  } else if (chan2.mode == voltage_fb) {
+  } else if (chan2.mode == VOLTAGE_FB) {
     if (chan2.isense > chan2.ilimit) {
       chan2.duty1 /= 2;
     } else {
@@ -301,7 +301,7 @@ static void feedback_ch2(void)
       fixed32_t p1_gain = 0x10;
       chan2.duty1 += ((uint64_t) error * p1_gain) >> 32;
     }
-  } else if (chan2.mode == current_fb) {
+  } else if (chan2.mode == CURRENT_FB) {
     if (chan2.vsense > chan1.vlimit) {
       chan2.duty1 /= 2;
     } else {
@@ -329,12 +329,12 @@ int regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
 {
   int ret;
 
-  if (reg->mode == disabled && mode != disabled)
+  if (reg->mode == DISABLED && mode != DISABLED)
     reg->enable_func();
-  else if (mode == disabled) 
+  else if (mode == DISABLED) 
     reg->disable_func();
 
-  if (mode != disabled) {
+  if (mode != DISABLED) {
     ret = reg->configure_func();
     if (ret != 0) return ret;
   }
@@ -345,7 +345,7 @@ int regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
 
 int regulator_set_duty_cycle(struct regulator_t *reg, float d1, float d2)
 {
-  if (reg->mode != const_duty)
+  if (reg->mode != CONST_DUTY)
     return 1;
   reg->duty1 = 0xffff * d1;
   reg->duty2 = 0xffff * d2;
