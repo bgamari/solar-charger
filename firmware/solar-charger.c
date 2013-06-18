@@ -70,6 +70,13 @@ int main(void)
   init_pins();
   init_buttons();
 
+  // cycle through LEDs
+  for (int i=0; i<7; i++) {
+    set_led(i, led_on);
+    for (int i=0; i<1000000; i++);
+    set_led(i, led_off);
+  }
+    
   led7_on();
   for (int i=0; i<1000000; i++);
   led7_off();
