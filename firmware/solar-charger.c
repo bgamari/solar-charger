@@ -1,3 +1,4 @@
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/exti.h>
@@ -18,6 +19,8 @@ int init_buttons(void)
 
   exti_enable_request(EXTI8 | EXTI10 | EXTI11);
   exti_set_trigger(EXTI8 | EXTI10 | EXTI11, EXTI_TRIGGER_FALLING);
+  nvic_enable_irq(NVIC_EXTI9_5_IRQ);
+  nvic_enable_irq(NVIC_EXTI15_10_IRQ);
   return 0;
 }
 
@@ -57,6 +60,9 @@ void led7_off(void) { gpio_clear(GPIOA, GPIO0); }
 
 int main(void)
 {
+  PWR_CR = (PWR_CR & ~(0x7 << 5)) | (0x6 << 5) | PWR_CR_PVDE; // PVD = 3.1V
+  exti_enable_request(EXTI16); // PVD interrupt
+
   rcc_peripheral_enable_clock(&RCC_AHBENR, RCC_AHBENR_GPIOAEN);
   rcc_peripheral_enable_clock(&RCC_AHBENR, RCC_AHBENR_GPIOBEN);
   enable_io_expander();
@@ -80,14 +86,22 @@ int main(void)
 void button1_pressed(void) { }
 void button2_pressed(void) { }
 void button3_pressed(void) { }
+void pvd_tripped(void) { }
 
-void exti_handler(void)
+void exti9_5_isr(void)
 {
   if (exti_get_flag_status(EXTI8))
     button3_pressed();
-  else if (exti_get_flag_status(EXTI10))
+  EXTI_PR |= EXTI8;
+}
+
+void exti15_10_isr(void)
+{
+  if (exti_get_flag_status(EXTI10))
     button2_pressed();
   else if (exti_get_flag_status(EXTI11))
     button1_pressed();
-  EXTI_PR |= EXTI8 | EXTI10 | EXTI11;
+  else if (exti_get_flag_status(EXTI16))
+    pvd_tripped();
+  EXTI_PR |= EXTI10 | EXTI11;
 }
