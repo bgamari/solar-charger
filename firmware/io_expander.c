@@ -32,9 +32,9 @@ static void disable_io_expander(void)
 {
   if (!enabled) return;
   enabled = false;
+  i2c_peripheral_disable(I2C1);
   gpio_clear(expander_en_port, expander_en_pin);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_I2C1EN);
-  i2c_peripheral_disable(I2C1);
 }
 
 static void write_command(u8 command, u8* data, unsigned int n)
