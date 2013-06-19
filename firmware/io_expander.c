@@ -9,7 +9,7 @@ const u8 expander_addr = 0x45;
 const u32 expander_en_port = GPIOB;
 const u32 expander_en_pin = GPIO5;
 
-static u8 shadow[3];
+static u8 shadow[3] = {0,0,0};
 
 static bool enabled = false;
 
