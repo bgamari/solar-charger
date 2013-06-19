@@ -1,5 +1,6 @@
 // I2C interface to TCA6057
 #include "io_expander.h"
+#include "clock.h"
 #include <libopencm3/stm32/i2c.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
@@ -10,9 +11,16 @@ const u32 expander_en_pin = GPIO5;
 
 static u8 shadow[3];
 
-void enable_io_expander()
+static bool enabled = false;
+
+static void update_leds(void);
+
+static void enable_io_expander(void)
 {
+  if (enabled) return;
+  enabled = true;
   gpio_set(expander_en_port, expander_en_pin);
+  delay_ms(1);
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_I2C1EN);
   i2c_reset(I2C1);
   i2c_peripheral_enable(I2C1);
@@ -20,8 +28,10 @@ void enable_io_expander()
   update_leds();
 }
 
-void disable_io_expander()
+static void disable_io_expander(void)
 {
+  if (!enabled) return;
+  enabled = false;
   gpio_clear(expander_en_port, expander_en_pin);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_I2C1EN);
   i2c_peripheral_disable(I2C1);
@@ -47,16 +57,29 @@ static void read_command(u8 command, u8* data, unsigned int n)
   i2c_send_stop(I2C1);
 }
 
-u8 read_reg(u8 reg)
+static u8 read_reg(u8 reg)
 {
   u8 d;
   read_command(0xf & reg, &d, 1);
   return d;
 }
 
-void write_reg(u8 reg, u8 value)
+static void write_reg(u8 reg, u8 value)
 {
   write_command(0xf & reg, &value, 1);
+}
+
+static void update_leds(void)
+{
+  bool any_on = false;
+  for (unsigned int i=0; i<3; i++)
+    any_on |= shadow[i] != 0;
+  if (any_on)
+    enable_io_expander();
+
+  write_command(0x10, shadow, 3);
+  if (!any_on)
+    disable_io_expander();
 }
 
 void set_led(u8 led, enum led_state state)
@@ -65,11 +88,7 @@ void set_led(u8 led, enum led_state state)
     shadow[i] &= ~(1<<led);
     shadow[i] |= (1 & (state >> i)) << led;
   }
-}
-
-void update_leds()
-{
-  write_command(0x10, shadow, 3);
+  update_leds();
 }
 
 void clear_leds()

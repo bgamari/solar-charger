@@ -10,9 +10,5 @@ enum led_state {
   led_blind_pwm1 = 0x7,
 };
 
-void enable_io_expander(void);
-void disable_io_expander(void);
-
-void update_leds(void);
 void clear_leds(void);
 void set_led(uint8_t led, enum led_state state);

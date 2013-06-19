@@ -65,7 +65,6 @@ int main(void)
 
   rcc_peripheral_enable_clock(&RCC_AHBENR, RCC_AHBENR_GPIOAEN);
   rcc_peripheral_enable_clock(&RCC_AHBENR, RCC_AHBENR_GPIOBEN);
-  enable_io_expander();
 
   init_pins();
   init_buttons();
