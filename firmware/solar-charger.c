@@ -32,11 +32,11 @@ void init_pins(void)
   gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
                   GPIO1 | GPIO4 | GPIO7); // EN pins
   gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO3 | GPIO5); // ADC pins
-  gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO6); // PWM pins
   gpio_set_af(GPIOA, GPIO_AF2, GPIO6);
+  gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO6); // PWM pins
 
-  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO0 | GPIO10); // PWM pins
   gpio_set_af(GPIOB, GPIO_AF2, GPIO0 | GPIO10);
+  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO0 | GPIO10); // PWM pins
   gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO1 | GPIO11); // EN pins
   gpio_mode_setup(GPIOB, GPIO_MODE_ANALOG, GPIO_PUPD_NONE,
                   GPIO12 | GPIO14 | GPIO15); // EN pins
@@ -44,15 +44,15 @@ void init_pins(void)
   gpio_mode_setup(GPIOA, GPIO_MODE_INPUT, GPIO_PUPD_PULLUP,
                   GPIO8 | GPIO11 | GPIO12); // buttons pins
 
-  gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9 | GPIO10); // USART1
   gpio_set_af(GPIOA, GPIO_AF7, GPIO9 | GPIO10);
+  gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9 | GPIO10); // USART1
 
   gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO5); // LED driver enable
-  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO6 | GPIO7); // LED driver I2C
   gpio_set_af(GPIOB, GPIO_AF4, GPIO6 | GPIO7);
+  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO6 | GPIO7); // LED driver I2C
 
-  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO8); // PWM pin
   gpio_set_af(GPIOB, GPIO_AF2, GPIO8);
+  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO8); // PWM pin
 }
 
 void led7_off(void) { gpio_set(GPIOA, GPIO0); }
