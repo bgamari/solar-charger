@@ -16,7 +16,7 @@ void usart_write(const char* c, unsigned int length)
 
 void usart_print(const char* c)
 {
-  for (const char* i = c; i != 0; i++)
+  for (const char* i = c; *i != 0; i++)
     usart_send_blocking(USART1, *i);
 }
 
