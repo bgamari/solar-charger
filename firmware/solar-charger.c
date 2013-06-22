@@ -55,8 +55,8 @@ void init_pins(void)
   gpio_set_af(GPIOB, GPIO_AF2, GPIO8);
 }
 
-void led7_on(void) { gpio_set(GPIOA, GPIO0); }
-void led7_off(void) { gpio_clear(GPIOA, GPIO0); }
+void led7_off(void) { gpio_set(GPIOA, GPIO0); }
+void led7_on(void) { gpio_clear(GPIOA, GPIO0); }
 
 int main(void)
 {
