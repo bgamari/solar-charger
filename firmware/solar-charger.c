@@ -76,9 +76,12 @@ int main(void)
     set_led(i, led_off);
   }
     
-  led7_on();
-  for (int i=0; i<1000000; i++);
-  led7_off();
+  for (int i=0; i<3; i++) {
+    led7_on();
+    delay_ms(100);
+    led7_off();
+    delay_ms(100);
+  }
 
   on_line_recv = handle_line_recv;
   configure_usart();
@@ -86,7 +89,7 @@ int main(void)
 
   //configure_ch1();
   //configure_ch2();
-  return 0;
+  while(true) {}
 }
 
 void button1_pressed(void) { }
