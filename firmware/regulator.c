@@ -41,7 +41,7 @@ static int configure_ch1(void);
 static void disable_ch1(void);
 
 struct regulator_t chan1 = {
-  .period = 0xf000,
+  .period = 2000000 / 10000,
   .mode = CURRENT_FB,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) * (3.3 / 0.05 / 100),
@@ -57,7 +57,7 @@ static int configure_ch2(void);
 static void disable_ch2(void);
 
 struct regulator_t chan2 = {
-  .period = 0x1000,
+  .period = 2000000 / 10000,
   .mode = VOLTAGE_FB,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) / (3.3 / 0.05 / 50),
