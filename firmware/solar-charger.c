@@ -49,7 +49,7 @@ void init_pins(void)
 
   gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO5); // LED driver enable
   gpio_set_af(GPIOB, GPIO_AF4, GPIO6 | GPIO7);
-  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO6 | GPIO7); // LED driver I2C
+  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO6 | GPIO7); // LED driver I2C
 
   gpio_set_af(GPIOB, GPIO_AF2, GPIO8);
   gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO8); // PWM pin
