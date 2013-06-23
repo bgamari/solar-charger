@@ -106,10 +106,15 @@ static void setup_common_peripherals(void)
 
   if (chan1.mode == DISABLED && chan2.mode == DISABLED) {
     while (ADC1_SR & ADC_SR_ADONS);
-    adc_off();
+    adc_off(ADC1);
     rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM7EN);
     rcc_peripheral_disable_clock(&RCC_APB2ENR, RCC_APB2ENR_ADC1EN);
+    rcc_osc_off(HSI);
   } else {
+    // ADCCLK is derived from HSI
+    rcc_osc_on(HSI);
+    rcc_wait_for_osc_ready(HSI);
+
     rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM7EN);
     rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_ADC1EN);
 
@@ -123,7 +128,7 @@ static void setup_common_peripherals(void)
     adc_set_injected_sequence(ADC1, 4, sequence);
     adc_power_on(ADC1);
     while (!(ADC1_SR & ADC_SR_ADONS));
-    while (!(ADC1_SR & ADC_SR_JCNR));
+    while (ADC1_SR & ADC_SR_JCNR);
     adc_start_conversion_injected(ADC1);
 
     timer_reset(TIM7);
