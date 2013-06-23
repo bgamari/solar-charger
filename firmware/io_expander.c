@@ -41,21 +41,37 @@ static void disable_io_expander(void)
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_I2C1EN);
 }
 
-static void write_command(u8 command, u8* data, unsigned int n)
+/* Returns true if successful */
+static bool i2c_try_arbitrate(uint32_t i2c, u8 address, uint8_t read_write)
 {
-  i2c_send_start(I2C1);
-  i2c_send_7bit_address(I2C1, expander_addr, 0);
+  i2c_send_start(i2c);
+  while (!(I2C1_SR1 & I2C_SR1_SB));
+  i2c_send_7bit_address(i2c, address, read_write);
+  while (true) {
+    if (I2C_SR1(i2c) & I2C_SR1_ADDR) break;
+    if (I2C_SR1(i2c) & I2C_SR1_ARLO) return false;
+  }
+  return true;
+}
+
+static void write_command(uint8_t command, uint8_t* data, unsigned int n)
+{
+  while (! i2c_try_arbitrate(I2C1, expander_addr, I2C_WRITE));
+  uint32_t unused = I2C1_SR2;
+
+  while (!(I2C1_SR1 & I2C_SR1_TxE));
   i2c_send_data(I2C1, command);
-  for (unsigned int i=0; i<n; i++)
+  for (unsigned int i=0; i<n; i++) {
+    while (!(I2C1_SR1 & I2C_SR1_TxE));
     i2c_send_data(I2C1, data[i]);
+  }
+  while (!(I2C1_SR1 & I2C_SR1_TxE));
   i2c_send_stop(I2C1);
 }
 
 static void read_command(u8 command, u8* data, unsigned int n)
 {
-  i2c_send_start(I2C1);
-  i2c_send_7bit_address(I2C1, expander_addr, 1);
-  i2c_send_data(I2C1, command);
+  while (! i2c_try_arbitrate(I2C1, expander_addr, I2C_WRITE));
   for (unsigned int i=0; i<n; i++)
     data[i] = i2c_get_data(I2C1);
   i2c_send_stop(I2C1);
