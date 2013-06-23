@@ -54,6 +54,28 @@ static bool i2c_try_arbitrate(uint32_t i2c, u8 address, uint8_t read_write)
   return true;
 }
 
+static void i2c_transfer(u32 i2c, uint8_t address, uint8_t* data, unsigned int length)
+{
+  while (! i2c_try_arbitrate(I2C1, address, I2C_WRITE));
+  if (I2C_SR2(i2c) & I2C_SR2_MSL) {
+    // transmitting
+    for (unsigned int i=0; i<length; i++) {
+      while (!(I2C_SR1(i2c) & I2C_SR1_TxE));
+      i2c_send_data(i2c, data[i]);
+    }
+  } else {
+    // receiving
+    i2c_enable_ack(i2c);
+    for (unsigned int i=0; i<length-1; i++) {
+      while (!(I2C_SR1(i2c) & I2C_SR1_RxNE));
+      data[i] = i2c_get_data(i2c);
+    }
+    i2c_disable_ack(i2c);
+    data[length-1] = i2c_get_data(i2c);
+  }
+  i2c_send_stop(i2c);
+}
+
 static void write_command(uint8_t command, uint8_t* data, unsigned int n)
 {
   while (! i2c_try_arbitrate(I2C1, expander_addr, I2C_WRITE));
