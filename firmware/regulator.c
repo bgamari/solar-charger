@@ -2,6 +2,7 @@
 #include <libopencm3/stm32/timer.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/l1/adc.h>
+#include <libopencm3/cm3/nvic.h>
 
 #include "regulator.h"
 
@@ -56,7 +57,7 @@ static int configure_ch2(void);
 static void disable_ch2(void);
 
 struct regulator_t chan2 = {
-  .period = 0xf000,
+  .period = 0x1000,
   .mode = VOLTAGE_FB,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) / (3.3 / 0.05 / 50),
@@ -85,7 +86,7 @@ static void set_vsense1_en(bool enabled)
  *  == Common peripherals ==
  *
  *   ADC1:   Sample voltages and current sense
- *   TIM9:   ADC trigger
+ *   TIM6:   ADC trigger
  *   GPIOA:  MOSFET driver enable
  * 
  *  == Channel 1 peripherals ==
@@ -103,21 +104,34 @@ static void setup_common_peripherals(void)
 {
   u8 sequence[] = { vsense1_ch, isense1_ch, vsense2_ch, isense2_ch };
 
-  if (chan1.mode != DISABLED && chan2.mode != DISABLED) {
-    rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB2ENR_TIM9EN);
-    rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB2ENR_ADC1EN);
+  if (chan1.mode == DISABLED && chan2.mode == DISABLED) {
+    while (ADC1_SR & ADC_SR_ADONS);
+    adc_off();
+    rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM7EN);
+    rcc_peripheral_disable_clock(&RCC_APB2ENR, RCC_APB2ENR_ADC1EN);
   } else {
-    rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB2ENR_TIM9EN);
-    rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB2ENR_ADC1EN);
+    rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM7EN);
+    rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_ADC1EN);
 
-    adc_power_on(ADC1);
+    nvic_enable_irq(NVIC_ADC1_IRQ);
     adc_enable_external_trigger_injected(ADC1, ADC_CR2_JEXTEN_RISING,
-                                         ADC_CR2_JEXTSEL_TIM9_TRGO);
+                                         ADC_CR2_JEXTSEL_TIM7_TRGO);
     adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_48CYC);
     //adc_set_resolution(ADC1, ADC_CR1_RES_12BIT);
     adc_enable_eoc_interrupt_injected(ADC1);
-    adc_set_clk_prescale(ADC_CCR_ADCPRE_DIV4);
+    //adc_set_clk_prescale(ADC_CCR_ADCPRE_DIV4);
     adc_set_injected_sequence(ADC1, 4, sequence);
+    adc_power_on(ADC1);
+    while (!(ADC1_SR & ADC_SR_ADONS));
+    while (!(ADC1_SR & ADC_SR_JCNR));
+    adc_start_conversion_injected(ADC1);
+
+    timer_reset(TIM7);
+    timer_continuous_mode(TIM7);
+    timer_set_prescaler(TIM7, 0x100);
+    timer_set_period(TIM7, 0xffff);
+    timer_set_master_mode(TIM7, TIM_CR2_MMS_UPDATE);
+    //timer_enable_counter(TIM7);
   }
 }
 
@@ -328,10 +342,12 @@ void adc1_isr(void)
 int regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
 {
   int ret;
+  enum feedback_mode old_mode = reg->mode;
 
-  if (reg->mode == DISABLED && mode != DISABLED)
+  reg->mode = mode;
+  if (old_mode == DISABLED && mode != DISABLED)
     reg->enable_func();
-  else if (mode == DISABLED) 
+  else if (mode == DISABLED)
     reg->disable_func();
 
   if (mode != DISABLED) {
@@ -339,7 +355,6 @@ int regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
     if (ret != 0) return ret;
   }
 
-  reg->mode = mode;
   return 0;
 }
 
@@ -370,5 +385,7 @@ int regulator_set_isetpoint(struct regulator_t *reg, float setpoint)
 
 void regulator_init(void)
 {
+  regulator_set_mode(&chan1, DISABLED);
+  regulator_set_mode(&chan2, DISABLED);
   regulator_set_ch2_source(INPUT);
 }

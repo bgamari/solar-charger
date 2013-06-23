@@ -80,18 +80,20 @@ int main(void)
     delay_ms(100);
   }
 
+  regulator_init();
+  regulator_set_mode(&chan2, CONST_DUTY);
+  regulator_set_duty_cycle(&chan2, 0.5, 0.5);
+
   on_line_recv = handle_line_recv;
   configure_usart();
   while (true) {
-  usart_print("hello world!\n");
-  delay_ms(500);
-  led7_on();
-  delay_ms(500);
-  led7_off();
+    usart_print("hello world!\n");
+    delay_ms(2000);
+    led7_on();
+    delay_ms(2000);
+    led7_off();
   }
 
-  //configure_ch1();
-  //configure_ch2();
   while(true) {}
 }
 

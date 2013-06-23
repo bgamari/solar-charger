@@ -34,7 +34,7 @@ void configure_usart(void)
 
 void usart1_isr(void)
 {
-  if (usart_get_interrupt_source(USART1, USART_SR_RXNE)) {
+  if (usart_get_flag(USART1, USART_SR_RXNE)) {
     char c = usart_recv(USART1);
     if (c == '\n') {
       rx_buf[rx_head] = 0;
