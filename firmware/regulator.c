@@ -86,7 +86,7 @@ static void set_vsense1_en(bool enabled)
  *  == Common peripherals ==
  *
  *   ADC1:   Sample voltages and current sense
- *   TIM6:   ADC trigger
+ *   TIM7:   ADC trigger
  *   GPIOA:  MOSFET driver enable
  * 
  *  == Channel 1 peripherals ==
@@ -124,19 +124,19 @@ static void setup_common_peripherals(void)
     adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_48CYC);
     //adc_set_resolution(ADC1, ADC_CR1_RES_12BIT);
     adc_enable_eoc_interrupt_injected(ADC1);
-    //adc_set_clk_prescale(ADC_CCR_ADCPRE_DIV4);
+    adc_set_clk_prescale(ADC_CCR_ADCPRE_DIV4);
     adc_set_injected_sequence(ADC1, 4, sequence);
+    adc_enable_scan_mode(ADC1);
     adc_power_on(ADC1);
     while (!(ADC1_SR & ADC_SR_ADONS));
     while (ADC1_SR & ADC_SR_JCNR);
-    adc_start_conversion_injected(ADC1);
 
     timer_reset(TIM7);
     timer_continuous_mode(TIM7);
-    timer_set_prescaler(TIM7, 0x100);
-    timer_set_period(TIM7, 0xffff);
+    timer_set_prescaler(TIM7, 0x1);
+    timer_set_period(TIM7, 2000000 / 1000);
     timer_set_master_mode(TIM7, TIM_CR2_MMS_UPDATE);
-    //timer_enable_counter(TIM7);
+    timer_enable_counter(TIM7);
   }
 }
 
@@ -290,9 +290,9 @@ void regulator_set_ch2_source(enum ch2_source_t src)
 static int configure_ch2()
 {
   uint32_t t = chan2.period * chan2.duty1 / 0xffff;
-  timer_disable_oc_output(TIM2, TIM_OC1);
-  timer_disable_oc_output(TIM2, TIM_OC3);
-  return configure_pwm(TIM2, ch2_oc, chan2.period, true, t);
+  timer_disable_oc_output(TIM3, TIM_OC1);
+  timer_disable_oc_output(TIM3, TIM_OC3);
+  return configure_pwm(TIM3, ch2_oc, chan2.period, true, t);
 }
  
 static void enable_ch2(void)
