@@ -27,6 +27,7 @@ static void enable_io_expander(void)
   i2c_reset(I2C1);
   i2c_set_clock_frequency(I2C1, 2);
   i2c_set_standard_mode(I2C1);
+  i2c_set_ccr(I2C1, 0x4);
   i2c_peripheral_enable(I2C1);
   update_leds();
 }
