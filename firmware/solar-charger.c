@@ -29,16 +29,23 @@ void init_pins(void)
   gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO0); // LED7
 
   // Regulator channel 1
-  gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO3 | GPIO4); // ADC pins
+  gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO3 | GPIO4); // analog channels
   gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO5); // Vsense1 EN
-  gpio_set_af(GPIOA, GPIO_AF2, GPIO5 | GPIO6);
-  gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO5 | GPIO6); // PWM pins
+
+  gpio_set_af(GPIOB, GPIO_AF2, GPIO8); // PB8 = CH1_A = TIM4_CH3
+  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO8);
+
+  gpio_set_af(GPIOB, GPIO_AF1, GPIO10); // PB10 = CH1_B = TIM2_CH3
+  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO10);
 
   // Regulator channel 2
-  gpio_set_af(GPIOB, GPIO_AF2, GPIO8 | GPIO10);
-  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO8 | GPIO10); // PWM pins
   gpio_mode_setup(GPIOB, GPIO_MODE_ANALOG, GPIO_PUPD_NONE,
                   GPIO12 | GPIO14 | GPIO15); // analog channels
+
+  gpio_set_af(GPIOA, GPIO_AF2, GPIO6); // PA6 = CH2_BATT = TIM3_CH1
+  gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO6);
+  gpio_set_af(GPIOB, GPIO_AF2, GPIO0); // PB0 = CH2_PANEL = TIM3_CH3
+  gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO0);
 
   gpio_mode_setup(GPIOA, GPIO_MODE_INPUT, GPIO_PUPD_PULLUP,
                   GPIO8 | GPIO11 | GPIO12); // buttons pins
