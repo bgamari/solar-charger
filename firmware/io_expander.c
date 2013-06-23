@@ -19,12 +19,15 @@ static void enable_io_expander(void)
 {
   if (enabled) return;
   enabled = true;
+  gpio_clear(expander_en_port, expander_en_pin);
+  delay_ms(1);
   gpio_set(expander_en_port, expander_en_pin);
   delay_ms(1);
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_I2C1EN);
   i2c_reset(I2C1);
-  i2c_peripheral_enable(I2C1);
+  i2c_set_clock_frequency(I2C1, 2);
   i2c_set_standard_mode(I2C1);
+  i2c_peripheral_enable(I2C1);
   update_leds();
 }
 
