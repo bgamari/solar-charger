@@ -73,7 +73,7 @@ int main(void)
   // cycle through LEDs
   for (int i=0; i<7; i++) {
     set_led(i, led_on);
-    for (int i=0; i<1000000; i++);
+    delay_ms(100);
     set_led(i, led_off);
   }
     
@@ -86,7 +86,13 @@ int main(void)
 
   on_line_recv = handle_line_recv;
   configure_usart();
+  while (true) {
   usart_print("hello world!\n");
+  delay_ms(500);
+  led7_on();
+  delay_ms(500);
+  led7_off();
+  }
 
   //configure_ch1();
   //configure_ch2();
