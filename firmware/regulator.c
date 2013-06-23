@@ -14,7 +14,7 @@ static const u32 isense2_ch = ADC_CHANNEL20;
 typedef unsigned int fixed32_t; // 16.16 fixed point
 typedef unsigned int fract32_t; // 0.32 fixed point
 
-static enum tim_oc_id ch2_oc;
+static enum tim_oc_id ch2_oc = TIM_OC1;
 
 /*
  * This ties together the various parameters needed by a single
@@ -105,8 +105,8 @@ static void setup_common_peripherals(void)
   u8 sequence[] = { vsense1_ch, isense1_ch, vsense2_ch, isense2_ch };
 
   if (chan1.mode == DISABLED && chan2.mode == DISABLED) {
-    while (ADC1_SR & ADC_SR_ADONS);
-    adc_off(ADC1);
+    if (RCC_APB2ENR & RCC_APB2ENR_ADC1EN)
+      adc_off(ADC1);
     rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM7EN);
     rcc_peripheral_disable_clock(&RCC_APB2ENR, RCC_APB2ENR_ADC1EN);
     rcc_osc_off(HSI);
@@ -130,6 +130,7 @@ static void setup_common_peripherals(void)
     adc_power_on(ADC1);
     while (!(ADC1_SR & ADC_SR_ADONS));
     while (ADC1_SR & ADC_SR_JCNR);
+    //adc_start_conversion_injected(ADC1);
 
     timer_reset(TIM7);
     timer_continuous_mode(TIM7);
@@ -162,7 +163,7 @@ static int configure_pwm(u32 timer, enum tim_oc_id oc,
   timer_enable_oc_preload(timer, oc);
   timer_enable_oc_output(timer, oc);
 
-  timer_set_mode(timer, 8, TIM_CR1_CMS_CENTER_3, TIM_CR1_DIR_UP);
+  timer_set_mode(timer, TIM_CR1_CKD_CK_INT_MUL_4, TIM_CR1_CMS_CENTER_3, TIM_CR1_DIR_UP);
   timer_enable_preload(timer);
   timer_set_period(timer, period);
   timer_generate_event(timer, TIM_EGR_UG);
@@ -292,7 +293,10 @@ static int configure_ch2()
   uint32_t t = chan2.period * chan2.duty1 / 0xffff;
   timer_disable_oc_output(TIM3, TIM_OC1);
   timer_disable_oc_output(TIM3, TIM_OC3);
-  return configure_pwm(TIM3, ch2_oc, chan2.period, true, t);
+  int ret = configure_pwm(TIM3, ch2_oc, chan2.period, true, t);
+  if (ret) return ret;
+  timer_enable_counter(TIM3);
+  return 0;
 }
  
 static void enable_ch2(void)
@@ -392,5 +396,4 @@ void regulator_init(void)
 {
   regulator_set_mode(&chan1, DISABLED);
   regulator_set_mode(&chan2, DISABLED);
-  regulator_set_ch2_source(INPUT);
 }
