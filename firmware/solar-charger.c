@@ -6,6 +6,8 @@
 #include "regulator.h"
 #include "io_expander.h"
 
+#include <libopencm3/stm32/timer.h>
+
 void handle_line_recv(const char* line, unsigned int length)
 {
   usart_write(line, length);
@@ -95,9 +97,9 @@ int main(void)
   configure_usart();
   while (true) {
     usart_print("hello world!\n");
-    delay_ms(2000);
+    delay_ms(1000);
     led7_on();
-    delay_ms(2000);
+    delay_ms(1000);
     led7_off();
   }
 

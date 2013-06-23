@@ -14,7 +14,7 @@ static const u32 isense2_ch = ADC_CHANNEL20;
 typedef unsigned int fixed32_t; // 16.16 fixed point
 typedef unsigned int fract32_t; // 0.32 fixed point
 
-static enum tim_oc_id ch2_oc = TIM_OC1;
+static enum tim_oc_id ch2_oc = TIM_OC3;
 
 /*
  * This ties together the various parameters needed by a single
@@ -130,7 +130,6 @@ static void setup_common_peripherals(void)
     adc_power_on(ADC1);
     while (!(ADC1_SR & ADC_SR_ADONS));
     while (ADC1_SR & ADC_SR_JCNR);
-    //adc_start_conversion_injected(ADC1);
 
     timer_reset(TIM7);
     timer_continuous_mode(TIM7);
@@ -163,7 +162,7 @@ static int configure_pwm(u32 timer, enum tim_oc_id oc,
   timer_enable_oc_preload(timer, oc);
   timer_enable_oc_output(timer, oc);
 
-  timer_set_mode(timer, TIM_CR1_CKD_CK_INT_MUL_4, TIM_CR1_CMS_CENTER_3, TIM_CR1_DIR_UP);
+  timer_set_mode(timer, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_CENTER_3, TIM_CR1_DIR_UP);
   timer_enable_preload(timer);
   timer_set_period(timer, period);
   timer_generate_event(timer, TIM_EGR_UG);
@@ -373,6 +372,7 @@ int regulator_set_duty_cycle(struct regulator_t *reg, float d1, float d2)
     return 1;
   reg->duty1 = 0xffff * d1;
   reg->duty2 = 0xffff * d2;
+  reg->configure_func();
   return 0;
 }
 
