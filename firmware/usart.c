@@ -19,6 +19,19 @@ void usart_print(const char* c)
     usart_send_blocking(USART1, *i);
 }
 
+unsigned int usart_readline(char* buffer, unsigned int length)
+{
+  unsigned int i;
+  for (i=0; i < length; i++) {
+    usart_wait_recv_ready(USART1);
+    buffer[i] = usart_recv(USART1);
+    if (buffer[i] == '\n')
+      break;
+  }
+  buffer[i] = 0;
+  return i;
+}
+
 void configure_usart(void)
 {
   rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_USART1EN);

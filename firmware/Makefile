@@ -10,7 +10,7 @@ GDB		= $(PREFIX)-gdb
 
 TOOLCHAIN_DIR ?= libopencm3
 ARCH_FLAGS      = -mthumb -mcpu=cortex-m3 -msoft-float
-CFLAGS		+= -Os -g \
+CFLAGS		+= -Os -ggdb \
 		   -Wall -Wextra -Wimplicit-function-declaration \
 		   -Wredundant-decls -Wstrict-prototypes \
 		   -Wundef -Wshadow \

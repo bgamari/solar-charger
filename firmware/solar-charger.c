@@ -6,7 +6,21 @@
 #include "regulator.h"
 #include "io_expander.h"
 
+#include <stdlib.h>
+#include <string.h>
 #include <libopencm3/stm32/timer.h>
+
+char* itoa(char* str, unsigned int len, unsigned int val)
+{
+  unsigned int i;
+  for (i=1; i <= len; i++) {
+    str[len-i] = (val % 10) + '0';
+    val /= 10;
+  }
+
+  str[i-1] = '\0';
+  return &str[i-1];
+}
 
 void handle_line_recv(const char* line, unsigned int length)
 {
@@ -91,16 +105,29 @@ int main(void)
 
   regulator_init();
   regulator_set_mode(&chan2, CONST_DUTY);
-  regulator_set_duty_cycle(&chan2, 0.5, 0.5);
+  regulator_set_duty_cycle(&chan2, 0.6, 0.5);
+  //gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO10);
+  //gpio_clear(GPIOB, GPIO10);
 
   on_line_recv = handle_line_recv;
   configure_usart();
+  usart_print("hello world!\n");
+
+  char cmd[20];
   while (true) {
-    usart_print("hello world!\n");
-    delay_ms(1000);
-    led7_on();
-    delay_ms(1000);
-    led7_off();
+    usart_print("> ");
+    usart_readline(cmd, 20);
+    uint32_t duty = strtof(cmd, NULL);
+    if (duty > 0xffff*3/4) {
+      strcpy(cmd, "error\n");
+    } else {
+      regulator_set_duty_cycle(&chan2, duty, duty);
+      strcpy(cmd, "out = ");
+      itoa(&cmd[6], 10, duty);
+      strcat(cmd, "\n");
+    }
+
+    usart_print(cmd);
   }
 
   while(true) {}

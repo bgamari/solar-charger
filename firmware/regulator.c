@@ -11,9 +11,6 @@ static const u32 isense1_ch = ADC_CHANNEL3;
 static const u32 vsense2_ch = ADC_CHANNEL21;
 static const u32 isense2_ch = ADC_CHANNEL20;
 
-typedef unsigned int fixed32_t; // 16.16 fixed point
-typedef unsigned int fract32_t; // 0.32 fixed point
-
 static enum tim_oc_id ch2_oc = TIM_OC3;
 
 /*
@@ -41,7 +38,7 @@ static int configure_ch1(void);
 static void disable_ch1(void);
 
 struct regulator_t chan1 = {
-  .period = 2000000 / 10000,
+  .period = 2000000 / 10000 / 5,
   .mode = CURRENT_FB,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) * (3.3 / 0.05 / 100),
@@ -57,7 +54,7 @@ static int configure_ch2(void);
 static void disable_ch2(void);
 
 struct regulator_t chan2 = {
-  .period = 2000000 / 10000,
+  .period = 2000000 / 10000 / 5,
   .mode = VOLTAGE_FB,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) / (3.3 / 0.05 / 50),
@@ -366,17 +363,17 @@ int regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
   return 0;
 }
 
-int regulator_set_duty_cycle(struct regulator_t *reg, float d1, float d2)
+int regulator_set_duty_cycle(struct regulator_t *reg, fract32_t d1, fract32_t d2)
 {
   if (reg->mode != CONST_DUTY)
     return 1;
-  reg->duty1 = 0xffff * d1;
-  reg->duty2 = 0xffff * d2;
+  reg->duty1 = d1;
+  reg->duty2 = d2;
   reg->configure_func();
   return 0;
 }
 
-int regulator_set_vsetpoint(struct regulator_t *reg, float setpoint)
+int regulator_set_vsetpoint(struct regulator_t *reg, fract32_t setpoint)
 {
   uint16_t v = ((uint32_t) (reg->vsense_gain * setpoint) >> 16);
   if (v > reg->vlimit) return 1;
@@ -384,7 +381,7 @@ int regulator_set_vsetpoint(struct regulator_t *reg, float setpoint)
   return 0;
 }
 
-int regulator_set_isetpoint(struct regulator_t *reg, float setpoint)
+int regulator_set_isetpoint(struct regulator_t *reg, fract32_t setpoint)
 {
   uint16_t i = ((uint32_t) (reg->isense_gain * setpoint) >> 16);
   if (i > reg->ilimit) return 1;
