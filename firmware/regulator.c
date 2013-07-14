@@ -332,7 +332,7 @@ static void disable_ch2(void)
 
 static void update_duty_ch2(void) 
 {
-  set_pwm_duty(TIM2, TIM_OC3, chan2.period, chan2.duty1);
+  set_pwm_duty(TIM3, ch2_oc, chan2.period, chan2.duty1);
 }
 
 
