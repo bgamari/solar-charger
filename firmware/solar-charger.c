@@ -26,6 +26,14 @@ char* itoa(char* str, unsigned int len, unsigned int val)
   return &str[i-1];
 }
 
+char* fixed32_to_a(char* str, unsigned int len, fixed32_t val)
+{
+  char* tmp = itoa(str, len, val>>16);
+  tmp[0] = '.';
+  // FIXME length
+  return itoa(&tmp[1], len - (tmp - str) - 1, 0xffff & val);
+}
+
 void handle_line_recv(const char* line, unsigned int length)
 {
   usart_write(line, length);
@@ -118,26 +126,44 @@ int main(void)
   usart_print("hello world!\n");
 
   char cmd[256];
+  struct regulator_t* reg = &chan1;
   while (true) {
     usart_print("> ");
     usart_readline(cmd, 256);
-    uint32_t value = strtol(&cmd[1], NULL, 10);
     if (cmd[0] == 'd') {
-      if (value > 0xffff*3/4) {
+      uint32_t duty = strtol(&cmd[1], NULL, 10);
+      if (duty > 0xffff*3/4) {
         strcpy(cmd, "error\n");
       } else {
-        regulator_set_duty_cycle(&chan2, value, value);
+        regulator_set_duty_cycle(reg, duty, duty);
         strcpy(cmd, "duty = ");
-        itoa(&cmd[6], 10, value);
+        itoa(&cmd[6], 10, duty);
         strcat(cmd, "\n");
       }
     } else if (cmd[0] == 'p') {
-      regulator_set_mode(&chan2, DISABLED);
-      regulator_set_period(&chan2, value);
-      regulator_set_mode(&chan2, CONST_DUTY);
+      uint32_t period = strtol(&cmd[1], NULL, 10);
+      regulator_set_mode(reg, DISABLED);
+      regulator_set_period(reg, period);
+      regulator_set_mode(reg, CONST_DUTY);
       strcpy(cmd, "freq = ");
-      itoa(&cmd[6], 10, value);
+      itoa(&cmd[6], 10, period);
       strcat(cmd, "\n");
+    } else if (cmd[0] == 'v') {
+      fixed32_t vsense = regulator_get_vsense(reg);
+      strcpy(cmd, "vsense = ");
+      itoa(&cmd[8], 10, vsense);
+      //fixed32_to_a(&cmd[8], vsense, 10);
+      strcat(cmd, "\n");
+    } else if (cmd[0] == 'i') {
+      fixed32_t isense = regulator_get_isense(reg);
+      strcpy(cmd, "isense = ");
+      fixed32_to_a(&cmd[8], isense, 10);
+      strcat(cmd, "\n");
+    } else if (cmd[0] == 'r') {
+      reg = cmd[1] == '1' ? &chan1 : &chan2;
+      strcpy(cmd, "channel ");
+      cmd[7] = reg == &chan1 ? '1' : '2';
+      strcat(cmd, "selected\n");
     } else if (cmd[0] == '?') {
       cmd[0] = '\0';
       usart_print(help_message);
