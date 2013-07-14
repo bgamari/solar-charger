@@ -17,6 +17,8 @@ int regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode);
 enum feedback_mode regulator_get_mode(struct regulator_t *reg);
 
 int regulator_set_duty_cycle(struct regulator_t *reg, fract32_t d1, fract32_t d2);
+fract32_t regulator_get_duty_cycle_1(struct regulator_t *reg);
+fract32_t regulator_get_duty_cycle_2(struct regulator_t *reg);
 
 int regulator_set_vsetpoint(struct regulator_t *reg, fixed32_t setpoint);
 fixed32_t regulator_get_vsetpoint(struct regulator_t *reg);
