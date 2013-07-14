@@ -389,12 +389,22 @@ int regulator_set_vsetpoint(struct regulator_t *reg, fixed32_t setpoint)
   return 0;
 }
 
+fixed32_t regulator_get_vsetpoint(struct regulator_t *reg)
+{
+  return (reg->vsetpoint << 16) / reg->vsense_gain;
+}
+
 int regulator_set_isetpoint(struct regulator_t *reg, fixed32_t setpoint)
 {
   uint16_t i = ((uint32_t) (reg->isense_gain * setpoint) >> 16);
   if (i > reg->ilimit) return 1;
   reg->isetpoint = i;
   return 0;
+}
+
+fixed32_t regulator_get_isetpoint(struct regulator_t *reg)
+{
+  return (reg->isetpoint << 16) / reg->isense_gain;
 }
 
 fixed32_t regulator_get_vsense(struct regulator_t *reg)

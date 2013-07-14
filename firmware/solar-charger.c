@@ -156,6 +156,24 @@ int main(void)
       strcpy(cmd, "freq = ");
       itoa(&cmd[6], 10, period);
       strcat(cmd, "\n");
+    } else if (cmd[0] == 's' && cmd[1] == 'v') {
+      fixed32_t setpoint = regulator_get_vsetpoint(reg);
+      if (cmd[2] == '=') {
+        setpoint = strtol(&cmd[3], NULL, 10);
+        regulator_set_vsetpoint(reg, setpoint);
+      }
+      strcpy(cmd, "voltage setpoint = ");
+      itoa(&cmd[19], 10, setpoint);
+      strcat(cmd, "\n");
+    } else if (cmd[0] == 's' && cmd[1] == 'i') {
+      fixed32_t setpoint = regulator_get_isetpoint(reg);
+      if (cmd[2] == '=') {
+        setpoint = strtol(&cmd[3], NULL, 10);
+        regulator_set_isetpoint(reg, setpoint);
+      }
+      strcpy(cmd, "current setpoint = ");
+      itoa(&cmd[19], 10, setpoint);
+      strcat(cmd, "\n");
     } else if (cmd[0] == 'v') {
       fixed32_t vsense = regulator_get_vsense(reg);
       strcpy(cmd, "vsense = ");
