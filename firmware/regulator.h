@@ -1,5 +1,5 @@
-typedef unsigned int fixed32_t; // 16.16 fixed point
-typedef unsigned int fract32_t; // 16.16 fixed point (for now)
+typedef int fixed32_t; // 16.16 fixed point
+typedef int fract32_t; // 16.16 fixed point (for now)
 
 struct regulator_t;
 extern struct regulator_t chan1;
