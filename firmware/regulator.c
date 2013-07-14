@@ -128,7 +128,7 @@ static void setup_common_peripherals(void)
     timer_reset(TIM7);
     timer_continuous_mode(TIM7);
     timer_set_prescaler(TIM7, 0x1);
-    timer_set_period(TIM7, 2000000 / 1000);
+    timer_set_period(TIM7, 2097000 / 1000);
     timer_set_master_mode(TIM7, TIM_CR2_MMS_UPDATE);
     timer_enable_counter(TIM7);
   }
