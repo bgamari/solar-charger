@@ -191,12 +191,12 @@ int main(void)
     } else if (cmd[0] == 'v') {
       fixed32_t vsense = regulator_get_vsense(reg);
       strcpy(cmd, "vsense = ");
-      fixed32_to_a(&cmd[8], 10, vsense);
+      fixed32_to_a(&cmd[strlen(cmd)], 10, vsense);
       strcat(cmd, "\n");
     } else if (cmd[0] == 'i') {
       fixed32_t isense = regulator_get_isense(reg);
       strcpy(cmd, "isense = ");
-      fixed32_to_a(&cmd[8], 10, isense);
+      fixed32_to_a(&cmd[strlen(cmd)], 10, isense);
       strcat(cmd, "\n");
     } else if (cmd[0] == 'r') {
       if (cmd[1] == '1')
