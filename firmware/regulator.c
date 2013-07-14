@@ -392,6 +392,16 @@ int regulator_set_isetpoint(struct regulator_t *reg, fract32_t setpoint)
   return 0;
 }
 
+fixed32_t regulator_get_vsense(struct regulator_t *reg)
+{
+  return (reg->vsense << 16) / reg->vsense_gain;
+}
+
+fixed32_t regulator_get_isense(struct regulator_t *reg)
+{
+  return (reg->isense << 16) / reg->isense_gain;
+}
+
 void regulator_init(void)
 {
   regulator_set_mode(&chan1, DISABLED);
