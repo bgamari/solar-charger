@@ -6,10 +6,10 @@
 
 #include "regulator.h"
 
-static const u32 vsense1_ch = ADC_CHANNEL5;
-static const u32 isense1_ch = ADC_CHANNEL3;
-static const u32 vsense2_ch = ADC_CHANNEL21;
-static const u32 isense2_ch = ADC_CHANNEL20;
+static const uint32_t vsense1_ch = ADC_CHANNEL5;
+static const uint32_t isense1_ch = ADC_CHANNEL3;
+static const uint32_t vsense2_ch = ADC_CHANNEL21;
+static const uint32_t isense2_ch = ADC_CHANNEL20;
 
 static enum tim_oc_id ch2_oc = TIM_OC3;
 
@@ -99,7 +99,7 @@ static void set_vsense1_en(bool enabled)
 
 static void setup_common_peripherals(void)
 {
-  u8 sequence[] = { vsense1_ch, isense1_ch, vsense2_ch, isense2_ch };
+  uint8_t sequence[] = { vsense1_ch, isense1_ch, vsense2_ch, isense2_ch };
 
   if (chan1.mode == DISABLED && chan2.mode == DISABLED) {
     if (RCC_APB2ENR & RCC_APB2ENR_ADC1EN)
@@ -137,7 +137,7 @@ static void setup_common_peripherals(void)
   }
 }
 
-static void set_pwm_duty(u32 timer, enum tim_oc_id oc, uint32_t period, fract32_t d)
+static void set_pwm_duty(uint32_t timer, enum tim_oc_id oc, uint32_t period, fract32_t d)
 {
   uint32_t t = ((uint64_t) d * period) >> 32;
   timer_set_oc_value(timer, oc, t);
@@ -154,8 +154,8 @@ static void set_pwm_duty(u32 timer, enum tim_oc_id oc, uint32_t period, fract32_
  * 
  * pol = 1
  */
-static int configure_pwm(u32 timer, enum tim_oc_id oc,
-                         u32 period, bool pol, u32 t)
+static int configure_pwm(uint32_t timer, enum tim_oc_id oc,
+                         uint32_t period, bool pol, uint32_t t)
 {
   timer_reset(timer);
   timer_continuous_mode(timer);
@@ -191,10 +191,10 @@ static int configure_pwm(u32 timer, enum tim_oc_id oc,
  *      ╰──╯  
  *       dt   
  */
-static int configure_dual_pwm(u32 timer_a, enum tim_oc_id oc_a,
-                              u32 timer_b, enum tim_oc_id oc_b,
-                              u32 slave_trigger_src,
-                              u32 period, u32 ta, u32 tb, u32 dt)
+static int configure_dual_pwm(uint32_t timer_a, enum tim_oc_id oc_a,
+                              uint32_t timer_b, enum tim_oc_id oc_b,
+                              uint32_t slave_trigger_src,
+                              uint32_t period, uint32_t ta, uint32_t tb, uint32_t dt)
 {
   // Configure PWMs independently
   configure_pwm(timer_a, oc_a, period, 1, ta);
