@@ -170,8 +170,8 @@ int main(void)
     } else if (cmd[0] == 'r') {
       reg = cmd[1] == '1' ? &chan1 : &chan2;
       strcpy(cmd, "channel ");
-      cmd[7] = reg == &chan1 ? '1' : '2';
-      strcat(cmd, "selected\n");
+      strcat(cmd, reg == &chan1 ? "1" : "2");
+      strcat(cmd, " selected\n");
     } else if (cmd[0] == 'm') {
       enum feedback_mode mode = regulator_get_mode(reg);
       bool set = true;
