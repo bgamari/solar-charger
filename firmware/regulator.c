@@ -363,7 +363,11 @@ int regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
 
   if (mode != DISABLED) {
     ret = reg->configure_func();
-    if (ret != 0) return ret;
+    if (ret != 0) {
+      reg->mode = DISABLED;
+      reg->disable_func();
+      return ret;
+    }
   }
 
   return 0;

@@ -225,11 +225,13 @@ int main(void)
         set = false;
       }
 
+      cmd[0] = 0;
       if (set) {
-        regulator_set_mode(reg, mode);
+        if (regulator_set_mode(reg, mode))
+          strcat(cmd, "error\n");
       }
 
-      strcpy(cmd, "mode = ");
+      strcat(cmd, "mode = ");
       strcat(cmd, modes[mode]);
       strcat(cmd, "\n");
     } else if (cmd[0] == 'm' && cmd[1] == 'v') {
