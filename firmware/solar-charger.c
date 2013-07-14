@@ -150,14 +150,18 @@ int main(void)
         set = true;
       }
 
+      int ret = 0;
       if (set)
-        regulator_set_duty_cycle(reg, duty1, duty2);
-
-      strcpy(cmd, "duty1 = ");
-      itoa(&cmd[strlen(cmd)], 10, duty1);
-      strcat(cmd, ", duty2 = ");
-      itoa(&cmd[strlen(cmd)], 10, duty2);
-      strcat(cmd, "\n");
+        ret = regulator_set_duty_cycle(reg, duty1, duty2);
+      if (ret) {
+        strcpy(cmd, "error: wrong mode\n");
+      } else {
+        strcpy(cmd, "duty1 = ");
+        itoa(&cmd[strlen(cmd)], 10, duty1);
+        strcat(cmd, ", duty2 = ");
+        itoa(&cmd[strlen(cmd)], 10, duty2);
+        strcat(cmd, "\n");
+      }
     } else if (cmd[0] == 'p') {
       uint32_t period = strtol(&cmd[1], NULL, 10);
       regulator_set_mode(reg, DISABLED);
