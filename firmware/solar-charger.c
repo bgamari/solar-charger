@@ -188,7 +188,7 @@ int main(void)
 
       fixed32_t setpoint = regulator_get_isetpoint(reg);
       strcpy(cmd, "current setpoint = ");
-      itoa(&cmd[19], 10, setpoint * 1000 / 0xffff);
+      itoa(&cmd[strlen(cmd)], 10, setpoint * 1000 / 0xffff);
       strcat(cmd, "\n");
     } else if (cmd[0] == 'v') {
       fixed32_t vsense = regulator_get_vsense(reg);
