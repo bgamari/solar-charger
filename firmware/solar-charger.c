@@ -13,6 +13,14 @@
 #include <libopencm3/stm32/timer.h>
 
 const char* help_message = "TODO: help message\n";
+static const char* const modes[] = {
+  "disabled",
+  "constant duty cycle",
+  "constant current",
+  "constant voltage",
+  "maximum power"
+};
+  
 
 char* itoa(char* str, unsigned int len, unsigned int val)
 {
@@ -28,10 +36,11 @@ char* itoa(char* str, unsigned int len, unsigned int val)
 
 char* fixed32_to_a(char* str, unsigned int len, fixed32_t val)
 {
+  return itoa(str, len, val);
   char* tmp = itoa(str, len, val>>16);
   tmp[0] = '.';
-  // FIXME length
-  return itoa(&tmp[1], len - (tmp - str) - 1, 0xffff & val);
+  //len -= (tmp - str) + 1; // FIXME length
+  return itoa(&tmp[1], len, 0xffff & val);
 }
 
 void handle_line_recv(const char* line, unsigned int length)
@@ -151,19 +160,54 @@ int main(void)
     } else if (cmd[0] == 'v') {
       fixed32_t vsense = regulator_get_vsense(reg);
       strcpy(cmd, "vsense = ");
-      itoa(&cmd[8], 10, vsense);
-      //fixed32_to_a(&cmd[8], vsense, 10);
+      fixed32_to_a(&cmd[8], 10, vsense);
       strcat(cmd, "\n");
     } else if (cmd[0] == 'i') {
       fixed32_t isense = regulator_get_isense(reg);
       strcpy(cmd, "isense = ");
-      fixed32_to_a(&cmd[8], isense, 10);
+      fixed32_to_a(&cmd[8], 10, isense);
       strcat(cmd, "\n");
     } else if (cmd[0] == 'r') {
       reg = cmd[1] == '1' ? &chan1 : &chan2;
       strcpy(cmd, "channel ");
       cmd[7] = reg == &chan1 ? '1' : '2';
       strcat(cmd, "selected\n");
+    } else if (cmd[0] == 'm') {
+      enum feedback_mode mode = regulator_get_mode(reg);
+      bool set = true;
+      if (cmd[1] == 'p') {
+        mode = MAX_POWER;
+      } else if (cmd[1] == 'd') {
+        mode = DISABLED;
+      } else if (cmd[1] == 'i') {
+        mode = CURRENT_FB;
+      } else if (cmd[1] == 'v') {
+        mode = VOLTAGE_FB;
+      } else if (cmd[1] == 'D') {
+        mode = CONST_DUTY;
+      } else {
+        set = false;
+      }
+
+      if (set) {
+        regulator_set_mode(reg, mode);
+      }
+
+      strcpy(cmd, "mode = ");
+      strcat(cmd, modes[mode]);
+      strcat(cmd, "\n");
+    } else if (cmd[0] == 'm' && cmd[1] == 'v') {
+      strcpy(cmd, "constant voltage mode\n");
+      regulator_set_mode(reg, VOLTAGE_FB);
+    } else if (cmd[0] == 'm' && cmd[1] == 'i') {
+      strcpy(cmd, "constant current mode\n");
+      regulator_set_mode(reg, CURRENT_FB);
+    } else if (cmd[0] == 'm' && cmd[1] == 'd') {
+      strcpy(cmd, "constant duty cycle\n");
+      regulator_set_mode(reg, CONST_DUTY);
+    } else if (cmd[0] == 'm') {
+      strcpy(cmd, "channel disabled\n");
+      regulator_set_mode(reg, DISABLED);
     } else if (cmd[0] == '?') {
       cmd[0] = '\0';
       usart_print(help_message);

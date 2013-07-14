@@ -56,8 +56,8 @@ static void disable_ch2(void);
 struct regulator_t chan2 = {
   .period = 2000000 / 5000,
   .mode = VOLTAGE_FB,
-  .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
-  .isense_gain = (1<<12) / (3.3 / 0.05 / 50),
+  .vsense_gain = (1<<12) / 3.3 * 33/(33+68),
+  .isense_gain = (1<<12) / (3.3 / 0.05 / 47),
   .vlimit = 0xffff,
   .ilimit = 0xffff,
   .enable_func = enable_ch2,
@@ -364,6 +364,11 @@ int regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
   }
 
   return 0;
+}
+
+enum feedback_mode regulator_get_mode(struct regulator_t *reg)
+{
+  return reg->mode;
 }
 
 int regulator_set_duty_cycle(struct regulator_t *reg, fract32_t d1, fract32_t d2)
