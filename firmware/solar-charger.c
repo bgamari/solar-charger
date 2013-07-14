@@ -131,7 +131,7 @@ int main(void)
         itoa(&cmd[6], 10, value);
         strcat(cmd, "\n");
       }
-    } else if (cmd[0] == 'f') {
+    } else if (cmd[0] == 'p') {
       regulator_set_mode(&chan2, DISABLED);
       regulator_set_period(&chan2, value);
       regulator_set_mode(&chan2, CONST_DUTY);
