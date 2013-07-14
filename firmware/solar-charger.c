@@ -2,6 +2,8 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/exti.h>
+
+#include "clock.h"
 #include "usart.h"
 #include "regulator.h"
 #include "io_expander.h"
