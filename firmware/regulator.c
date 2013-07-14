@@ -28,6 +28,8 @@ struct regulator_t {
   enum feedback_mode mode;
   uint16_t isetpoint, vlimit; // in codepoints, only used in current_fb mode
   uint16_t vsetpoint, ilimit; // in codepoints, only used in voltage_fb mode
+  fixed32_t v1_prop_gain, v2_prop_gain; // voltage feedback gains
+  fixed32_t i1_prop_gain, i2_prop_gain; // current feedback gains
   void (*enable_func)(void);
   int (*configure_func)(void);
   void (*disable_func)(void);
@@ -46,6 +48,10 @@ struct regulator_t chan1 = {
   .isense_gain = (1<<12) * (3.3 / 0.05 / 100),
   .vlimit = 0xffff,
   .ilimit = 0xffff,
+  .v1_prop_gain = 0x10000,
+  .v2_prop_gain = 0x10000,
+  .i1_prop_gain = 0x10000,
+  .i2_prop_gain = 0x10000,
   .enable_func = enable_ch1,
   .configure_func = configure_ch1,
   .disable_func = disable_ch1,
@@ -64,6 +70,10 @@ struct regulator_t chan2 = {
   .isense_gain = (1<<12) / (3.3 / 0.05 / 47),
   .vlimit = 0xffff,
   .ilimit = 0xffff,
+  .v1_prop_gain = 0x10000,
+  .v2_prop_gain = 0x10000,
+  .i1_prop_gain = 0x10000,
+  .i2_prop_gain = 0x10000,
   .enable_func = enable_ch2,
   .configure_func = configure_ch2,
   .disable_func = disable_ch2,
@@ -227,10 +237,8 @@ static void regulator_feedback(struct regulator_t *reg)
       reg->duty2 /= 2;
     } else {
       int32_t error = reg->vsense - reg->vsetpoint;
-      fixed32_t p1_gain = 0x10;
-      fixed32_t p2_gain = 0x10;
-      reg->duty1 += ((uint64_t) error * p1_gain) >> 32;
-      reg->duty2 += ((uint64_t) error * p2_gain) >> 32;
+      reg->duty1 -= ((int64_t) error * reg->v1_prop_gain) >> 16;
+      reg->duty2 -= ((int64_t) error * reg->v2_prop_gain) >> 16;
     }
   } else if (reg->mode == CURRENT_FB) {
     if (reg->vsense > reg->vlimit) {
@@ -238,10 +246,8 @@ static void regulator_feedback(struct regulator_t *reg)
       reg->duty2 /= 2;
     } else {
       int32_t error = reg->isense - reg->isetpoint;
-      fixed32_t p1_gain = 0x10;
-      fixed32_t p2_gain = 0x10;
-      reg->duty1 += ((uint64_t) error * p1_gain) >> 32;
-      reg->duty2 += ((uint64_t) error * p2_gain) >> 32;
+      reg->duty1 -= ((int64_t) error * reg->i1_prop_gain) >> 16;
+      reg->duty2 -= ((int64_t) error * reg->i2_prop_gain) >> 16;
     }
   }
 
