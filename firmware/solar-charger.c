@@ -139,22 +139,32 @@ int main(void)
     usart_print("> ");
     usart_readline(cmd, 256);
     if (cmd[0] == 'd') {
-      uint32_t duty = strtol(&cmd[1], NULL, 10);
-      if (duty > 0xffff*3/4) {
-        strcpy(cmd, "error\n");
-      } else {
-        regulator_set_duty_cycle(reg, duty, duty);
-        strcpy(cmd, "duty = ");
-        itoa(&cmd[6], 10, duty);
-        strcat(cmd, "\n");
+      fract32_t duty1 = regulator_get_duty_cycle_1(reg);
+      fract32_t duty2 = regulator_get_duty_cycle_1(reg);
+      bool set = false;
+      if (cmd[1] == '=') {
+        char* temp;
+        duty1 = strtol(&cmd[2], &temp, 10);
+        if (temp[0] == ',')
+          duty2 = strtol(&temp[1], &temp, 10);
+        set = true;
       }
+
+      if (set)
+        regulator_set_duty_cycle(reg, duty1, duty2);
+
+      strcpy(cmd, "duty1 = ");
+      itoa(&cmd[strlen(cmd)], 10, duty1);
+      strcat(cmd, ", duty2 = ");
+      itoa(&cmd[strlen(cmd)], 10, duty2);
+      strcat(cmd, "\n");
     } else if (cmd[0] == 'p') {
       uint32_t period = strtol(&cmd[1], NULL, 10);
       regulator_set_mode(reg, DISABLED);
       regulator_set_period(reg, period);
       regulator_set_mode(reg, CONST_DUTY);
       strcpy(cmd, "freq = ");
-      itoa(&cmd[6], 10, period);
+      itoa(&cmd[strlen(cmd)], 10, period);
       strcat(cmd, "\n");
     } else if (cmd[0] == 's' && cmd[1] == 'v') {
       fixed32_t setpoint = regulator_get_vsetpoint(reg);
@@ -163,7 +173,7 @@ int main(void)
         regulator_set_vsetpoint(reg, setpoint);
       }
       strcpy(cmd, "voltage setpoint = ");
-      itoa(&cmd[19], 10, setpoint);
+      itoa(&cmd[strlen(cmd)], 10, setpoint);
       strcat(cmd, "\n");
     } else if (cmd[0] == 's' && cmd[1] == 'i') {
       fixed32_t setpoint = regulator_get_isetpoint(reg);
