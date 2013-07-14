@@ -136,7 +136,8 @@ static void setup_common_peripherals(void)
 
 static void set_pwm_duty(uint32_t timer, enum tim_oc_id oc, uint32_t period, fract32_t d)
 {
-  uint32_t t = ((uint64_t) d * period) >> 32;
+  uint32_t t = ((uint64_t) d * period) >> 16;
+  if (t > 0xffff) while (1); // uh oh
   timer_set_oc_value(timer, oc, t);
 }
 
