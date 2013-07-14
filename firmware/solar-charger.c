@@ -171,32 +171,34 @@ int main(void)
       itoa(&cmd[strlen(cmd)], 10, period);
       strcat(cmd, "\n");
     } else if (cmd[0] == 's' && cmd[1] == 'v') {
-      fixed32_t setpoint = regulator_get_vsetpoint(reg);
       if (cmd[2] == '=') {
-        setpoint = strtol(&cmd[3], NULL, 10);
-        regulator_set_vsetpoint(reg, setpoint);
+        fixed32_t setpoint = strtol(&cmd[3], NULL, 10);
+        regulator_set_vsetpoint(reg, setpoint * 0xffff / 1000);
       }
+
+      fixed32_t setpoint = regulator_get_vsetpoint(reg);
       strcpy(cmd, "voltage setpoint = ");
-      itoa(&cmd[strlen(cmd)], 10, setpoint);
+      itoa(&cmd[strlen(cmd)], 10, setpoint * 1000 / 0xffff);
       strcat(cmd, "\n");
     } else if (cmd[0] == 's' && cmd[1] == 'i') {
-      fixed32_t setpoint = regulator_get_isetpoint(reg);
       if (cmd[2] == '=') {
-        setpoint = strtol(&cmd[3], NULL, 10);
-        regulator_set_isetpoint(reg, setpoint);
+        fixed32_t setpoint = strtol(&cmd[3], NULL, 10);
+        regulator_set_isetpoint(reg, setpoint * 0xffff / 1000);
       }
+
+      fixed32_t setpoint = regulator_get_isetpoint(reg);
       strcpy(cmd, "current setpoint = ");
-      itoa(&cmd[19], 10, setpoint);
+      itoa(&cmd[19], 10, setpoint * 1000 / 0xffff);
       strcat(cmd, "\n");
     } else if (cmd[0] == 'v') {
       fixed32_t vsense = regulator_get_vsense(reg);
       strcpy(cmd, "vsense = ");
-      fixed32_to_a(&cmd[strlen(cmd)], 10, vsense);
+      fixed32_to_a(&cmd[strlen(cmd)], 10, vsense * 1000 / 0xffff);
       strcat(cmd, "\n");
     } else if (cmd[0] == 'i') {
       fixed32_t isense = regulator_get_isense(reg);
       strcpy(cmd, "isense = ");
-      fixed32_to_a(&cmd[strlen(cmd)], 10, isense);
+      fixed32_to_a(&cmd[strlen(cmd)], 10, isense * 1000 / 0xffff);
       strcat(cmd, "\n");
     } else if (cmd[0] == 'r') {
       if (cmd[1] == '1')
