@@ -38,7 +38,7 @@ static int configure_ch1(void);
 static void disable_ch1(void);
 
 struct regulator_t chan1 = {
-  .period = 2000000 / 10000 / 5,
+  .period = 2000000 / 10000,
   .mode = CURRENT_FB,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) * (3.3 / 0.05 / 100),
@@ -54,7 +54,7 @@ static int configure_ch2(void);
 static void disable_ch2(void);
 
 struct regulator_t chan2 = {
-  .period = 2000000 / 10000 / 5,
+  .period = 2000000 / 5000,
   .mode = VOLTAGE_FB,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) / (3.3 / 0.05 / 50),
@@ -137,6 +137,12 @@ static void setup_common_peripherals(void)
   }
 }
 
+static void set_pwm_duty(u32 timer, enum tim_oc_id oc, uint32_t period, fract32_t d)
+{
+  uint32_t t = ((uint64_t) d * period) >> 32;
+  timer_set_oc_value(timer, oc, t);
+}
+
 /* Configure center-aligned PWM output
  *
  *           period
@@ -209,12 +215,6 @@ static int configure_dual_pwm(u32 timer_a, enum tim_oc_id oc_a,
 
   timer_enable_counter(timer_a);
   return 0;
-}
-
-static void set_pwm_duty(u32 timer, enum tim_oc_id oc, uint32_t period, fract32_t d)
-{
-  uint32_t t = ((uint64_t) d * period) >> 32;
-  timer_set_oc_value(timer, oc, t);
 }
 
 static int configure_ch1(void)
@@ -312,6 +312,8 @@ static void feedback_ch2(void)
 {
   if (chan2.mode == DISABLED) {
     return;
+  } else if (chan2.mode == CONST_DUTY) {
+    return;
   } else if (chan2.mode == VOLTAGE_FB) {
     if (chan2.isense > chan2.ilimit) {
       chan2.duty1 /= 2;
@@ -330,6 +332,7 @@ static void feedback_ch2(void)
     }
   }
 
+  chan2.duty1 = 0xffff & chan2.duty1;
   set_pwm_duty(TIM2, TIM_OC3, chan2.period, chan2.duty1);
 }
 
@@ -393,4 +396,12 @@ void regulator_init(void)
 {
   regulator_set_mode(&chan1, DISABLED);
   regulator_set_mode(&chan2, DISABLED);
+}
+
+int regulator_set_period(struct regulator_t *reg, unsigned int period)
+{
+  if (reg->mode != DISABLED)
+    return -1;
+  reg->period = period;
+  return 0;
 }

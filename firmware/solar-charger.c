@@ -113,18 +113,29 @@ int main(void)
   configure_usart();
   usart_print("hello world!\n");
 
-  char cmd[20];
+  char cmd[256];
   while (true) {
     usart_print("> ");
-    usart_readline(cmd, 20);
-    uint32_t duty = strtof(cmd, NULL);
-    if (duty > 0xffff*3/4) {
-      strcpy(cmd, "error\n");
-    } else {
-      regulator_set_duty_cycle(&chan2, duty, duty);
-      strcpy(cmd, "out = ");
-      itoa(&cmd[6], 10, duty);
+    usart_readline(cmd, 256);
+    uint32_t value = strtol(&cmd[1], NULL, 10);
+    if (cmd[0] == 'd') {
+      if (value > 0xffff*3/4) {
+        strcpy(cmd, "error\n");
+      } else {
+        regulator_set_duty_cycle(&chan2, value, value);
+        strcpy(cmd, "duty = ");
+        itoa(&cmd[6], 10, value);
+        strcat(cmd, "\n");
+      }
+    } else if (cmd[0] == 'f') {
+      regulator_set_mode(&chan2, DISABLED);
+      regulator_set_period(&chan2, value);
+      regulator_set_mode(&chan2, CONST_DUTY);
+      strcpy(cmd, "freq = ");
+      itoa(&cmd[6], 10, value);
       strcat(cmd, "\n");
+    } else {
+      strcpy(cmd, "error\n");
     }
 
     usart_print(cmd);

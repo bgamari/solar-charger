@@ -22,3 +22,5 @@ int regulator_set_vsetpoint(struct regulator_t *reg, fract32_t setpoint);
 int regulator_set_isetpoint(struct regulator_t *reg, fract32_t setpoint);
 
 void regulator_set_ch2_source(enum ch2_source_t src);
+
+int regulator_set_period(struct regulator_t *reg, unsigned int period);
