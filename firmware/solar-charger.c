@@ -185,7 +185,10 @@ int main(void)
       fixed32_to_a(&cmd[8], 10, isense);
       strcat(cmd, "\n");
     } else if (cmd[0] == 'r') {
-      reg = cmd[1] == '1' ? &chan1 : &chan2;
+      if (cmd[1] == '1')
+        reg = &chan1;
+      else if (cmd[1] == '2')
+        reg = &chan2;
       strcpy(cmd, "channel ");
       strcat(cmd, reg == &chan1 ? "1" : "2");
       strcat(cmd, " selected\n");
