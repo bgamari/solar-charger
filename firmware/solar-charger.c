@@ -125,8 +125,7 @@ int main(void)
   }
 
   regulator_init();
-  regulator_set_mode(&chan2, CONST_DUTY);
-  regulator_set_duty_cycle(&chan2, 0.6, 0.5);
+
   //gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO10);
   //gpio_clear(GPIOB, GPIO10);
 
