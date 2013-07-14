@@ -10,6 +10,8 @@
 #include <string.h>
 #include <libopencm3/stm32/timer.h>
 
+const char* help_message = "TODO: help message\n";
+
 char* itoa(char* str, unsigned int len, unsigned int val)
 {
   unsigned int i;
@@ -134,6 +136,9 @@ int main(void)
       strcpy(cmd, "freq = ");
       itoa(&cmd[6], 10, value);
       strcat(cmd, "\n");
+    } else if (cmd[0] == '?') {
+      cmd[0] = '\0';
+      usart_print(help_message);
     } else {
       strcpy(cmd, "error\n");
     }
