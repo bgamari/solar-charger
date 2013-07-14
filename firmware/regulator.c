@@ -381,7 +381,7 @@ int regulator_set_duty_cycle(struct regulator_t *reg, fract32_t d1, fract32_t d2
   return 0;
 }
 
-int regulator_set_vsetpoint(struct regulator_t *reg, fract32_t setpoint)
+int regulator_set_vsetpoint(struct regulator_t *reg, fixed32_t setpoint)
 {
   uint16_t v = ((uint32_t) (reg->vsense_gain * setpoint) >> 16);
   if (v > reg->vlimit) return 1;
@@ -389,7 +389,7 @@ int regulator_set_vsetpoint(struct regulator_t *reg, fract32_t setpoint)
   return 0;
 }
 
-int regulator_set_isetpoint(struct regulator_t *reg, fract32_t setpoint)
+int regulator_set_isetpoint(struct regulator_t *reg, fixed32_t setpoint)
 {
   uint16_t i = ((uint32_t) (reg->isense_gain * setpoint) >> 16);
   if (i > reg->ilimit) return 1;
