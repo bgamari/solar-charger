@@ -31,11 +31,13 @@ struct regulator_t {
   void (*enable_func)(void);
   int (*configure_func)(void);
   void (*disable_func)(void);
+  void (*update_duty_func)(void);
 };
 
 static void enable_ch1(void);
 static int configure_ch1(void);
 static void disable_ch1(void);
+static void update_duty_ch1(void);
 
 struct regulator_t chan1 = {
   .period = 2000000 / 10000,
@@ -46,12 +48,14 @@ struct regulator_t chan1 = {
   .ilimit = 0xffff,
   .enable_func = enable_ch1,
   .configure_func = configure_ch1,
-  .disable_func = disable_ch1
+  .disable_func = disable_ch1,
+  .update_duty_func = update_duty_ch1
 };
 
 static void enable_ch2(void);
 static int configure_ch2(void);
 static void disable_ch2(void);
+static void update_duty_ch2(void);
 
 struct regulator_t chan2 = {
   .period = 2000000 / 5000,
@@ -62,16 +66,9 @@ struct regulator_t chan2 = {
   .ilimit = 0xffff,
   .enable_func = enable_ch2,
   .configure_func = configure_ch2,
-  .disable_func = disable_ch2
+  .disable_func = disable_ch2,
+  .update_duty_func = update_duty_ch2
 };
-
-static void set_vsense1_en(bool enabled)
-{
-  if (enabled) {
-    gpio_set(GPIOA, GPIO5);
-  } else
-    gpio_clear(GPIOA, GPIO5);
-}
 
 /*
  * Switching voltage regulator core
@@ -217,6 +214,45 @@ static int configure_dual_pwm(uint32_t timer_a, enum tim_oc_id oc_a,
   return 0;
 }
 
+static void regulator_feedback(struct regulator_t *reg)
+{
+  if (reg->mode == DISABLED) {
+    return;
+  } else if (reg->mode == CONST_DUTY) {
+    return;
+  } else if (reg->mode == VOLTAGE_FB) {
+    if (reg->isense > reg->ilimit) {
+      reg->duty1 /= 2;
+      reg->duty2 /= 2;
+    } else {
+      int32_t error = reg->vsense - reg->vsetpoint;
+      fixed32_t p1_gain = 0x10;
+      fixed32_t p2_gain = 0x10;
+      reg->duty1 += ((uint64_t) error * p1_gain) >> 32;
+      reg->duty2 += ((uint64_t) error * p2_gain) >> 32;
+    }
+  } else if (reg->mode == CURRENT_FB) {
+    if (reg->vsense > reg->vlimit) {
+      reg->duty1 /= 2;
+      reg->duty2 /= 2;
+    } else {
+      int32_t error = reg->isense - reg->isetpoint;
+      fixed32_t p1_gain = 0x10;
+      fixed32_t p2_gain = 0x10;
+      reg->duty1 += ((uint64_t) error * p1_gain) >> 32;
+      reg->duty2 += ((uint64_t) error * p2_gain) >> 32;
+    }
+  }
+
+  reg->duty1 = 0xffff & reg->duty1;
+  reg->duty2 = 0xffff & reg->duty2;
+  reg->update_duty_func();
+}
+
+
+/*******************************
+ * Channel 1
+ *******************************/
 static int configure_ch1(void)
 {
   uint32_t dt = 0x10;
@@ -226,6 +262,14 @@ static int configure_ch1(void)
                             TIM4, TIM_OC3,
                             TIM_SMCR_TS_ITR0,
                             chan1.period, ta, tb, dt);
+}
+
+static void set_vsense1_en(bool enabled)
+{
+  if (enabled) {
+    gpio_set(GPIOA, GPIO5);
+  } else
+    gpio_clear(GPIOA, GPIO5);
 }
 
 static void enable_ch1(void)
@@ -246,38 +290,16 @@ static void disable_ch1(void)
   set_vsense1_en(false);
 }
 
-static void feedback_ch1(void)
+static void update_duty_ch1(void)
 {
-  if (chan1.mode == DISABLED) {
-    return;
-  } else if (chan1.mode == VOLTAGE_FB) {
-    if (chan1.isense > chan1.ilimit) {
-      chan1.duty1 /= 2;
-      chan1.duty2 /= 2;
-    } else {
-      int32_t error = chan1.vsense - chan1.vsetpoint;
-      fixed32_t p1_gain = 0x10;
-      fixed32_t p2_gain = 0x10;
-      chan1.duty1 += ((uint64_t) error * p1_gain) >> 32;
-      chan1.duty2 += ((uint64_t) error * p2_gain) >> 32;
-    }
-  } else if (chan1.mode == CURRENT_FB) {
-    if (chan1.vsense > chan1.vlimit) {
-      chan1.duty1 /= 2;
-      chan1.duty2 /= 2;
-    } else {
-      int32_t error = chan1.isense - chan1.isetpoint;
-      fixed32_t p1_gain = 0x10;
-      fixed32_t p2_gain = 0x10;
-      chan1.duty1 += ((uint64_t) error * p1_gain) >> 32;
-      chan1.duty2 += ((uint64_t) error * p2_gain) >> 32;
-    }
-  }
-
   set_pwm_duty(TIM2, TIM_OC3, chan1.period, chan1.duty1);
   set_pwm_duty(TIM4, TIM_OC3, chan1.period, chan1.duty2);
 }
 
+
+/*******************************
+ * Channel 2
+ *******************************/
 void regulator_set_ch2_source(enum ch2_source_t src)
 {
   ch2_oc = (src == BATTERY) ? TIM_OC1 : TIM_OC3;
@@ -308,34 +330,15 @@ static void disable_ch2(void)
   setup_common_peripherals();
 }
 
-static void feedback_ch2(void)
+static void update_duty_ch2(void) 
 {
-  if (chan2.mode == DISABLED) {
-    return;
-  } else if (chan2.mode == CONST_DUTY) {
-    return;
-  } else if (chan2.mode == VOLTAGE_FB) {
-    if (chan2.isense > chan2.ilimit) {
-      chan2.duty1 /= 2;
-    } else {
-      int32_t error = chan2.vsense - chan2.vsetpoint;
-      fixed32_t p1_gain = 0x10;
-      chan2.duty1 += ((uint64_t) error * p1_gain) >> 32;
-    }
-  } else if (chan2.mode == CURRENT_FB) {
-    if (chan2.vsense > chan1.vlimit) {
-      chan2.duty1 /= 2;
-    } else {
-      int32_t error = chan2.isense - chan2.isetpoint;
-      fixed32_t p1_gain = 0x10;
-      chan2.duty1 += ((uint64_t) error * p1_gain) >> 32;
-    }
-  }
-
-  chan2.duty1 = 0xffff & chan2.duty1;
   set_pwm_duty(TIM2, TIM_OC3, chan2.period, chan2.duty1);
 }
 
+
+/*******************************
+ * Public interface
+ *******************************/
 void adc1_isr(void)
 {
   ADC1_SR &= ~ADC_SR_JEOC;
@@ -343,8 +346,8 @@ void adc1_isr(void)
   chan1.isense = adc_read_injected(ADC1, 2);
   chan2.vsense = adc_read_injected(ADC1, 3);
   chan2.isense = adc_read_injected(ADC1, 4);
-  feedback_ch1();
-  feedback_ch2();
+  regulator_feedback(&chan1);
+  regulator_feedback(&chan2);
 }
 
 int regulator_set_mode(struct regulator_t *reg, enum feedback_mode mode)
