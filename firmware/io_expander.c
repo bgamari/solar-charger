@@ -5,11 +5,11 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 
-const u8 expander_addr = 0x45;
-const u32 expander_en_port = GPIOB;
-const u32 expander_en_pin = GPIO5;
+const uint8_t expander_addr = 0x45;
+const uint32_t expander_en_port = GPIOB;
+const uint32_t expander_en_pin = GPIO5;
 
-static u8 shadow[3] = {0,0,0};
+static uint8_t shadow[3] = {0,0,0};
 
 static bool enabled = false;
 
@@ -42,7 +42,7 @@ static void disable_io_expander(void)
 }
 
 /* Returns true if successful */
-static bool i2c_try_arbitrate(uint32_t i2c, u8 address, uint8_t read_write)
+static bool i2c_try_arbitrate(uint32_t i2c, uint8_t address, uint8_t read_write)
 {
   i2c_send_start(i2c);
   while (!(I2C1_SR1 & I2C_SR1_SB));
@@ -54,7 +54,7 @@ static bool i2c_try_arbitrate(uint32_t i2c, u8 address, uint8_t read_write)
   return true;
 }
 
-static void i2c_transfer(u32 i2c, uint8_t address, uint8_t* data, unsigned int length)
+static void i2c_transfer(uint32_t i2c, uint8_t address, uint8_t* data, unsigned int length)
 {
   while (! i2c_try_arbitrate(I2C1, address, I2C_WRITE));
   if (I2C_SR2(i2c) & I2C_SR2_MSL) {
@@ -91,7 +91,7 @@ static void write_command(uint8_t command, uint8_t* data, unsigned int n)
   i2c_send_stop(I2C1);
 }
 
-static void read_command(u8 command, u8* data, unsigned int n)
+static void read_command(uint8_t command, uint8_t* data, unsigned int n)
 {
   while (! i2c_try_arbitrate(I2C1, expander_addr, I2C_WRITE));
   for (unsigned int i=0; i<n; i++)
@@ -99,14 +99,14 @@ static void read_command(u8 command, u8* data, unsigned int n)
   i2c_send_stop(I2C1);
 }
 
-static u8 read_reg(u8 reg)
+static uint8_t read_reg(uint8_t reg)
 {
-  u8 d;
+  uint8_t d;
   read_command(0xf & reg, &d, 1);
   return d;
 }
 
-static void write_reg(u8 reg, u8 value)
+static void write_reg(uint8_t reg, uint8_t value)
 {
   write_command(0xf & reg, &value, 1);
 }
@@ -124,7 +124,7 @@ static void update_leds(void)
     disable_io_expander();
 }
 
-void set_led(u8 led, enum led_state state)
+void set_led(uint8_t led, enum led_state state)
 {
   for (unsigned int i=0; i<3; i++) {
     shadow[i] &= ~(1<<led);
