@@ -339,10 +339,10 @@ static void feedback_ch2(void)
 void adc1_isr(void)
 {
   ADC1_SR &= ~ADC_SR_JEOC;
-  chan1.vsense = adc_read_injected(ADC1, ADC1_JDR1);
-  chan1.isense = adc_read_injected(ADC1, ADC1_JDR2);
-  chan2.vsense = adc_read_injected(ADC1, ADC1_JDR3);
-  chan2.isense = adc_read_injected(ADC1, ADC1_JDR4);
+  chan1.vsense = adc_read_injected(ADC1, 1);
+  chan1.isense = adc_read_injected(ADC1, 2);
+  chan2.vsense = adc_read_injected(ADC1, 3);
+  chan2.isense = adc_read_injected(ADC1, 4);
   feedback_ch1();
   feedback_ch2();
 }
