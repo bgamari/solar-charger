@@ -6,7 +6,7 @@
 
 #include "regulator.h"
 
-static const uint32_t vsense1_ch = ADC_CHANNEL5;
+static const uint32_t vsense1_ch = ADC_CHANNEL4;
 static const uint32_t isense1_ch = ADC_CHANNEL3;
 static const uint32_t vsense2_ch = ADC_CHANNEL21;
 static const uint32_t isense2_ch = ADC_CHANNEL20;
