@@ -270,7 +270,11 @@ int main(void)
 void button1_pressed(void) { }
 void button2_pressed(void) { }
 void button3_pressed(void) { }
-void pvd_tripped(void) { }
+
+void pvd_isr(void)
+{
+  EXTI_PR |= EXTI16;
+}
 
 void exti9_5_isr(void)
 {
@@ -285,7 +289,5 @@ void exti15_10_isr(void)
     button2_pressed();
   else if (exti_get_flag_status(EXTI11))
     button1_pressed();
-  else if (exti_get_flag_status(EXTI16))
-    pvd_tripped();
   EXTI_PR |= EXTI10 | EXTI11;
 }
