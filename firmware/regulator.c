@@ -43,7 +43,7 @@ static void update_duty_ch1(void);
 
 struct regulator_t chan1 = {
   .period = 2000000 / 10000,
-  .mode = CURRENT_FB,
+  .mode = DISABLED,
   .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
   .isense_gain = (1<<12) * (3.3 / 0.05 / 100),
   .vlimit = 0xffff,
@@ -65,7 +65,7 @@ static void update_duty_ch2(void);
 
 struct regulator_t chan2 = {
   .period = 2000000 / 5000,
-  .mode = VOLTAGE_FB,
+  .mode = DISABLED,
   .vsense_gain = (1<<12) / 3.3 * 33/(33+68),
   .isense_gain = (1<<12) / (3.3 / 0.05 / 47),
   .vlimit = 0xffff,
