@@ -160,7 +160,7 @@ int main(void)
     usart_readline(cmd, 256);
     if (cmd[0] == 'd') {
       fract32_t duty1 = regulator_get_duty_cycle_1(reg);
-      fract32_t duty2 = regulator_get_duty_cycle_1(reg);
+      fract32_t duty2 = regulator_get_duty_cycle_2(reg);
       bool set = false;
       if (cmd[1] == '=') {
         char* temp;
