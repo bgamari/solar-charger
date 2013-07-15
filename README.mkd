@@ -11,6 +11,7 @@
   `PA5`    out      `PA5`        `VSENSE1_EN`      voltage sense enable
   `PA6`    af2      `TIM3_CH1`   `CH2_BATT_IN`     switch PWM
   `PB0`    af2      `TIM3_CH3`   `CH2_PANEL_IN`    switch PWM
+  `PB8`    af2      `TIM4_CH3`   `CH1_IN_B`        switch PWM
   `PB10`   af2      `TIM2_CH3`   `CH1_IN_A`        switch PWM
   `PB12`   analog   `ADC_IN18`   `VTH`             thermistor input
   `PB14`   analog   `ADC_IN20`   `ISENSE2`         current sense input
