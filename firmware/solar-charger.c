@@ -12,7 +12,27 @@
 #include <string.h>
 #include <libopencm3/stm32/timer.h>
 
-const char* help_message = "TODO: help message\n";
+const char* help_message = \
+  "help\n"
+  "r                 get active regulator\n"
+  "r[12]             set active regulator\n"
+  "d                 get duty cycle\n"
+  "d=(D1),(D2)       set duty cycle (const. duty mode only)\n"
+  "p=(PERIOD)        set period\n"
+  "sv                get voltage setpoint in millivolts\n"
+  "sv=(V)            set voltage setpoint in millivolts\n"
+  "si                get current setpoint in milliamps\n"
+  "si=(I)            set current setpoint in milliamps\n"
+  "v                 get sense voltage\n"
+  "i                 get sense current\n"
+  "m[pivDd]          set regulator mode\n"
+  "                  p = maximum power mode\n                     "
+  "                  i = current feedback mode\n"
+  "                  v = voltage feedback mode\n"
+  "                  D = constant duty cycle mode\n"
+  "                  d = disabled\n"
+  "?                 disable help message\n"
+  "";
 static const char* const modes[] = {
   "disabled",
   "constant duty cycle",
@@ -167,7 +187,7 @@ int main(void)
       regulator_set_mode(reg, DISABLED);
       regulator_set_period(reg, period);
       regulator_set_mode(reg, CONST_DUTY);
-      strcpy(cmd, "freq = ");
+      strcpy(cmd, "period = ");
       itoa(&cmd[strlen(cmd)], 10, period);
       strcat(cmd, "\n");
     } else if (cmd[0] == 's' && cmd[1] == 'v') {
@@ -234,18 +254,6 @@ int main(void)
       strcat(cmd, "mode = ");
       strcat(cmd, modes[mode]);
       strcat(cmd, "\n");
-    } else if (cmd[0] == 'm' && cmd[1] == 'v') {
-      strcpy(cmd, "constant voltage mode\n");
-      regulator_set_mode(reg, VOLTAGE_FB);
-    } else if (cmd[0] == 'm' && cmd[1] == 'i') {
-      strcpy(cmd, "constant current mode\n");
-      regulator_set_mode(reg, CURRENT_FB);
-    } else if (cmd[0] == 'm' && cmd[1] == 'd') {
-      strcpy(cmd, "constant duty cycle\n");
-      regulator_set_mode(reg, CONST_DUTY);
-    } else if (cmd[0] == 'm') {
-      strcpy(cmd, "channel disabled\n");
-      regulator_set_mode(reg, DISABLED);
     } else if (cmd[0] == '?') {
       cmd[0] = '\0';
       usart_print(help_message);
