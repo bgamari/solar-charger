@@ -291,6 +291,8 @@ static void enable_ch1(void)
 
 static void disable_ch1(void)
 {
+  timer_disable_oc_output(TIM2, TIM_OC3);
+  timer_disable_oc_output(TIM4, TIM_OC3);
   timer_disable_counter(TIM2);
   timer_disable_counter(TIM4);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
@@ -309,17 +311,19 @@ static void update_duty_ch1(void)
 /*******************************
  * Channel 2
  *******************************/
-void regulator_set_ch2_source(enum ch2_source_t src)
+int regulator_set_ch2_source(enum ch2_source_t src)
 {
+  if (chan2.mode != DISABLED) return -1;
   ch2_oc = (src == BATTERY) ? TIM_OC1 : TIM_OC3;
+  timer_disable_oc_output(TIM3, TIM_OC1);
+  timer_disable_oc_output(TIM3, TIM_OC3);
   configure_ch2();
+  return 0;
 }
 
 static int configure_ch2()
 {
   uint32_t t = chan2.period * chan2.duty1 / 0xffff;
-  timer_disable_oc_output(TIM3, TIM_OC1);
-  timer_disable_oc_output(TIM3, TIM_OC3);
   int ret = configure_pwm(TIM3, ch2_oc, chan2.period, true, t);
   if (ret) return ret;
   timer_enable_counter(TIM3);
@@ -334,6 +338,8 @@ static void enable_ch2(void)
 
 static void disable_ch2(void)
 {
+  timer_disable_oc_output(TIM3, TIM_OC1);
+  timer_disable_oc_output(TIM3, TIM_OC3);
   timer_disable_counter(TIM3);
   rcc_peripheral_disable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
   setup_common_peripherals();
