@@ -163,7 +163,7 @@ static void set_pwm_duty(uint32_t timer, enum tim_oc_id oc, uint32_t period, fra
  * pol = 1
  */
 static int configure_pwm(uint32_t timer, enum tim_oc_id oc,
-                         uint32_t period, bool pol, uint32_t t)
+                         uint32_t period, bool pol, uint16_t t)
 {
   timer_reset(timer);
   timer_continuous_mode(timer);
@@ -202,7 +202,7 @@ static int configure_pwm(uint32_t timer, enum tim_oc_id oc,
 static int configure_dual_pwm(uint32_t timer_a, enum tim_oc_id oc_a,
                               uint32_t timer_b, enum tim_oc_id oc_b,
                               uint32_t slave_trigger_src,
-                              uint32_t period, uint32_t ta, uint32_t tb, uint32_t dt)
+                              uint32_t period, uint16_t ta, uint16_t tb, uint32_t dt)
 {
   // Configure PWMs independently
   configure_pwm(timer_a, oc_a, period, 1, ta);
@@ -265,8 +265,8 @@ static void regulator_feedback(struct regulator_t *reg)
 static int configure_ch1(void)
 {
   uint32_t dt = 0x10;
-  uint32_t ta = ((uint64_t) chan1.period * chan1.duty1) >> 32;
-  uint32_t tb = ((uint64_t) chan1.period * chan1.duty2) >> 32;
+  uint16_t ta = ((uint64_t) chan1.period * chan1.duty1) >> 16;
+  uint16_t tb = ((uint64_t) chan1.period * chan1.duty2) >> 16;
   return configure_dual_pwm(TIM2, TIM_OC3,
                             TIM4, TIM_OC3,
                             TIM_SMCR_TS_ITR0,
