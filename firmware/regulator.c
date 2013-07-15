@@ -251,8 +251,10 @@ static void regulator_feedback(struct regulator_t *reg)
     }
   }
 
-  reg->duty1 = 0xffff & reg->duty1;
-  reg->duty2 = 0xffff & reg->duty2;
+  if (reg->duty1 < 0x0000) reg->duty1 = 0;
+  if (reg->duty1 > 0xffff) reg->duty1 = 0xffff;
+  if (reg->duty2 < 0x0000) reg->duty2 = 0;
+  if (reg->duty2 > 0xffff) reg->duty2 = 0xffff;
   reg->update_duty_func();
 }
 
