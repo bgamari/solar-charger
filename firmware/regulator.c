@@ -42,10 +42,10 @@ static void disable_ch1(void);
 static void update_duty_ch1(void);
 
 struct regulator_t chan1 = {
-  .period = 2000000 / 10000,
+  .period = 2000000 / 5000,
   .mode = DISABLED,
-  .vsense_gain = (1<<12) / (3.3 * 33/(33+68)),
-  .isense_gain = (1<<12) * (3.3 / 0.05 / 100),
+  .vsense_gain = (1<<12) / 3.3 * 33/(33+68),
+  .isense_gain = (1<<12) / (3.3 / 0.05 / 10),
   .vlimit = 0xffff,
   .ilimit = 0xffff,
   .v1_prop_gain = 0x10000,
@@ -125,7 +125,7 @@ static void setup_common_peripherals(void)
     nvic_enable_irq(NVIC_ADC1_IRQ);
     adc_enable_external_trigger_injected(ADC1, ADC_CR2_JEXTEN_RISING,
                                          ADC_CR2_JEXTSEL_TIM7_TRGO);
-    adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_48CYC);
+    adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_96CYC);
     //adc_set_resolution(ADC1, ADC_CR1_RES_12BIT);
     adc_enable_eoc_interrupt_injected(ADC1);
     adc_set_clk_prescale(ADC_CCR_ADCPRE_DIV4);
@@ -197,7 +197,9 @@ static int configure_pwm(uint32_t timer, enum tim_oc_id oc,
  *         ╰──╯
  *          tb
  *      ╰──╯  
- *       dt   
+ *       dt
+ *
+ * timer_b is configured as a gated slave to timer_a.
  */
 static int configure_dual_pwm(uint32_t timer_a, enum tim_oc_id oc_a,
                               uint32_t timer_b, enum tim_oc_id oc_b,
@@ -210,18 +212,15 @@ static int configure_dual_pwm(uint32_t timer_a, enum tim_oc_id oc_a,
 
   // Setup A in master mode
   timer_set_master_mode(timer_a, TIM_CR2_MMS_ENABLE);
-  timer_slave_set_mode(timer_a, TIM_SMCR_MSM);
 
   // Setup B in trigger slave mode
-  timer_slave_set_mode(timer_b, TIM_SMCR_SMS_TM);
+  timer_slave_set_mode(timer_b, TIM_SMCR_SMS_GM);
   timer_slave_set_trigger(timer_b, slave_trigger_src);
 
   // Configure offset
   timer_set_period(timer_a, period - dt);
   timer_generate_event(timer_a, TIM_EGR_UG);
   timer_set_period(timer_a, period);
-
-  timer_enable_counter(timer_a);
   return 0;
 }
 
@@ -267,10 +266,14 @@ static int configure_ch1(void)
   uint32_t dt = 0x10;
   uint16_t ta = ((uint64_t) chan1.period * chan1.duty1) >> 16;
   uint16_t tb = ((uint64_t) chan1.period * chan1.duty2) >> 16;
-  return configure_dual_pwm(TIM2, TIM_OC3,
-                            TIM4, TIM_OC3,
-                            TIM_SMCR_TS_ITR0,
-                            chan1.period, ta, tb, dt);
+  int ret = configure_dual_pwm(TIM2, TIM_OC3,
+                               TIM4, TIM_OC3,
+                               TIM_SMCR_TS_ITR1,
+                               chan1.period, ta, tb, dt);
+  if (ret) return ret;
+  timer_enable_counter(TIM4);
+  timer_enable_counter(TIM2);
+  return 0;
 }
 
 static void set_vsense1_en(bool enabled)
@@ -303,8 +306,10 @@ static void disable_ch1(void)
 
 static void update_duty_ch1(void)
 {
+  timer_disable_counter(TIM2);
   set_pwm_duty(TIM2, TIM_OC3, chan1.period, chan1.duty1);
   set_pwm_duty(TIM4, TIM_OC3, chan1.period, chan1.duty2);
+  timer_enable_counter(TIM2);
 }
 
 
@@ -397,6 +402,8 @@ int regulator_set_duty_cycle(struct regulator_t *reg, fract32_t d1, fract32_t d2
 {
   if (reg->mode != CONST_DUTY)
     return 1;
+  if (d2 > d1)
+    return 2;
   reg->duty1 = d1;
   reg->duty2 = d2;
   reg->configure_func();
