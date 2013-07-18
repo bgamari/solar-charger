@@ -228,8 +228,14 @@ static void regulator_feedback_error(struct regulator_t *reg,
                                      struct feedback_gains *gains,
                                      int32_t error
 ) {
-  reg->duty1 -= ((int64_t) error * gains->prop_gain1) >> 16;
-  reg->duty2 -= ((int64_t) error * gains->prop_gain2) >> 16;
+  const int32_t fudge = 2000;
+  if (error < 0 && reg->duty1 > 0xffff - fudge) {
+    reg->duty2 -= ((int64_t) error * gains->prop_gain2) >> 16;
+  } else if (error > 0 && reg->duty2 < fudge) {
+    reg->duty2 -= ((int64_t) error * gains->prop_gain2) >> 16;
+  } else {
+    reg->duty1 -= ((int64_t) error * gains->prop_gain1) >> 16;
+  }
 }                                     
 
 static void regulator_feedback(struct regulator_t *reg)
