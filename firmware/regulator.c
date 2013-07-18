@@ -13,6 +13,10 @@ static const uint32_t isense2_ch = ADC_CHANNEL20;
 
 static enum tim_oc_id ch2_oc = TIM_OC3;
 
+struct feedback_gains {
+  fixed32_t prop_gain1, prop_gain2; // gains for each channel
+};
+  
 /*
  * This ties together the various parameters needed by a single
  * channel feedback loop. 
@@ -28,7 +32,7 @@ struct regulator_t {
   enum feedback_mode mode;
   uint16_t isetpoint, vlimit; // in codepoints, only used in current_fb mode
   uint16_t vsetpoint, ilimit; // in codepoints, only used in voltage_fb mode
-  fixed32_t v1_prop_gain, v2_prop_gain; // voltage feedback gains
+  struct feedback_gains i_gains, v_gains;
   fixed32_t i1_prop_gain, i2_prop_gain; // current feedback gains
   void (*enable_func)(void);
   int (*configure_func)(void);
@@ -48,10 +52,8 @@ struct regulator_t chan1 = {
   .isense_gain = (1<<12) / (3.3 / 0.05 / 10),
   .vlimit = 0xffff,
   .ilimit = 0xffff,
-  .v1_prop_gain = 0x10000,
-  .v2_prop_gain = 0x10000,
-  .i1_prop_gain = 0x10000,
-  .i2_prop_gain = 0x10000,
+  .v_gains = { 0x10000, 0x10000 },
+  .i_gains = { 0x10000, 0x10000 },
   .enable_func = enable_ch1,
   .configure_func = configure_ch1,
   .disable_func = disable_ch1,
@@ -70,10 +72,8 @@ struct regulator_t chan2 = {
   .isense_gain = (1<<12) / (3.3 / 0.05 / 47),
   .vlimit = 0xffff,
   .ilimit = 0xffff,
-  .v1_prop_gain = 0x10000,
-  .v2_prop_gain = 0x10000,
-  .i1_prop_gain = 0x10000,
-  .i2_prop_gain = 0x10000,
+  .v_gains = { 0x10000, 0x10000 },
+  .i_gains = { 0x10000, 0x10000 },
   .enable_func = enable_ch2,
   .configure_func = configure_ch2,
   .disable_func = disable_ch2,
@@ -224,6 +224,14 @@ static int configure_dual_pwm(uint32_t timer_a, enum tim_oc_id oc_a,
   return 0;
 }
 
+static void regulator_feedback_error(struct regulator_t *reg,
+                                     struct feedback_gains *gains,
+                                     int32_t error
+) {
+  reg->duty1 -= ((int64_t) error * gains->prop_gain1) >> 16;
+  reg->duty2 -= ((int64_t) error * gains->prop_gain2) >> 16;
+}                                     
+
 static void regulator_feedback(struct regulator_t *reg)
 {
   if (reg->mode == DISABLED) {
@@ -236,8 +244,7 @@ static void regulator_feedback(struct regulator_t *reg)
       reg->duty2 /= 2;
     } else {
       int32_t error = reg->vsense - reg->vsetpoint;
-      reg->duty1 -= ((int64_t) error * reg->v1_prop_gain) >> 16;
-      reg->duty2 -= ((int64_t) error * reg->v2_prop_gain) >> 16;
+      regulator_feedback_error(reg, &reg->v_gains, error);
     }
   } else if (reg->mode == CURRENT_FB) {
     if (reg->vsense > reg->vlimit) {
@@ -245,8 +252,7 @@ static void regulator_feedback(struct regulator_t *reg)
       reg->duty2 /= 2;
     } else {
       int32_t error = reg->isense - reg->isetpoint;
-      reg->duty1 -= ((int64_t) error * reg->i1_prop_gain) >> 16;
-      reg->duty2 -= ((int64_t) error * reg->i2_prop_gain) >> 16;
+      regulator_feedback_error(reg, &reg->i_gains, error);
     }
   }
 
