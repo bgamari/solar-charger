@@ -229,13 +229,28 @@ static void regulator_feedback_error(struct regulator_t *reg,
                                      int32_t error
 ) {
   const int32_t fudge = 2000;
-  if (error < 0 && reg->duty1 > 0xffff - fudge) {
+  // negative error == voltage too low
+  if (error < 0 && (reg->duty1 > 0xffff - fudge) && (reg->duty2 > 0xffff - fudge)) {
+    // voltage collapsed: fall back
+    reg->duty1 = 0xffff/2;
+    reg->duty2 = 0xffff/2;
+  } else if (error < 0 && reg->duty1 > 0xffff - fudge) {
+    // switch 1 overflow, start increasing switch 2
     reg->duty2 -= ((int64_t) error * gains->prop_gain2) >> 16;
-  } else if (error > 0 && reg->duty2 < fudge) {
+  } else if (error > 0 && reg->duty1 < fudge) {
+    // switch 1 underflow, start decreasing switch 2
     reg->duty2 -= ((int64_t) error * gains->prop_gain2) >> 16;
+  } else if (error < 0 && reg->duty2 > fudge) {
+    // ???
+    reg->duty2 += ((int64_t) error * gains->prop_gain2) >> 16;
   } else {
+    // normal operating conditions, regulate with switch 1
     reg->duty1 -= ((int64_t) error * gains->prop_gain1) >> 16;
   }
+
+  // Ensure switch 2 is never on when switch 1 is off
+  if (reg->duty2 > reg->duty1)
+    reg->duty2 = reg->duty1;
 }                                     
 
 static void regulator_feedback(struct regulator_t *reg)
