@@ -2,8 +2,6 @@
 
 ## issues
 
- * LDO too small
- * need larger output capacitor on channel 1
  * smaller, lower power, cheaper MOSFETs?
  * monitor input voltage?
  * not enough ponies?
