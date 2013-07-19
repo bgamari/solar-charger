@@ -630,7 +630,7 @@ refdes=C6
 T 74300 49800 5 10 0 0 270 0 1
 symversion=0.1
 T 73600 49500 5 10 0 1 0 0 1
-footprint=RCY100P
+footprint=RCY150P
 }
 C 73500 48800 1 0 0 gnd-1.sym
 N 71100 51700 71100 50500 4
