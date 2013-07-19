@@ -1,27 +1,20 @@
-Element(0x00 "Mini small outline package, .65mm" "" "MSOP8" 122 50 3 100 0x00)
-(
-	Pad(8 12 30 12 16 "1" 0x00)
-	Pad(8 38 30 38 16 "2" 0x100)
-	Pad(8 63 30 63 16 "3" 0x100)
-	Pad(8 89 30 89 16 "4" 0x100)
-	
-	Pad(175 90 197 90 16 "5" 0x100)
-	Pad(175 64 197 64 16 "6" 0x100)
-	Pad(175 39 197 39 16 "7" 0x100)
-	Pad(175 13 197 13 16 "8" 0x100)
-	
-	
-	
-	
-	
-	
-	
-	ElementLine(-10 -10 77 -10 10)
-	ElementArc(102 -10 25 25 0 180 10)
-	ElementLine(127 -10 215 -10 10)
-	ElementLine(215 -10 215 112 10)
-	ElementLine(215 112 -10 112 10)
-	ElementLine(-10 112 -10 -10 10)
-	Mark(23 12)
-)
 
+Element["" "" "" "" 230.00mil 300.00mil 0.0000 0.0000 0 100 ""]
+(
+	Pad[-95.00mil -40.00mil -73.00mil -40.00mil 16.00mil 30.00mil 46.00mil "" "1" "square"]
+	Pad[-95.00mil -14.00mil -73.00mil -14.00mil 16.00mil 30.00mil 46.00mil "" "2" "square"]
+	Pad[-95.00mil 11.00mil -73.00mil 11.00mil 16.00mil 30.00mil 46.00mil "" "3" "square"]
+	Pad[-95.00mil 37.00mil -73.00mil 37.00mil 16.00mil 30.00mil 46.00mil "" "4" "square"]
+	Pad[72.00mil 38.00mil 94.00mil 38.00mil 16.00mil 30.00mil 46.00mil "" "5" "edge2,square"]
+	Pad[72.00mil 12.00mil 94.00mil 12.00mil 16.00mil 30.00mil 46.00mil "" "6" "edge2,square"]
+	Pad[72.00mil -13.00mil 94.00mil -13.00mil 16.00mil 30.00mil 46.00mil "" "7" "edge2,square"]
+	Pad[72.00mil -39.00mil 94.00mil -39.00mil 16.00mil 30.00mil 46.00mil "" "8" "edge2,square"]
+	Pad[0.0000 -40.00mil 0.0000 40.00mil 80.00mil 20.00mil 100.00mil "" "9" ""]
+	ElementLine [-113.00mil -62.00mil -26.00mil -62.00mil 10.00mil]
+	ElementLine [24.00mil -62.00mil 112.00mil -62.00mil 10.00mil]
+	ElementLine [112.00mil -62.00mil 112.00mil 60.00mil 10.00mil]
+	ElementLine [112.00mil 60.00mil -113.00mil 60.00mil 10.00mil]
+	ElementLine [-113.00mil 60.00mil -113.00mil -62.00mil 10.00mil]
+	ElementArc [-1.00mil -62.00mil 25.00mil 25.00mil 0 180 10.00mil]
+
+	)
