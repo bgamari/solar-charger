@@ -2023,7 +2023,7 @@ Element["" "MSOP8" "U1" "unknown" 2002.00mil 2987.00mil -12.00mil 23.00mil 0 100
 
 	)
 
-Element["" "RCY150P" "C6" "unknown" 1465.00mil 2330.00mil 75.00mil 150.00mil 2 100 ""]
+Element["" "RCY150P" "C6" "unknown" 1450.00mil 2330.00mil 75.00mil 150.00mil 2 100 ""]
 (
 	Pin[0.0000 0.0000 60.00mil 30.00mil 66.00mil 30.00mil "1" "1" "square,edge2"]
 	Pin[-150.00mil 0.0000 60.00mil 30.00mil 66.00mil 30.00mil "2" "2" "edge2,thermal(3X)"]
@@ -2474,12 +2474,15 @@ Layer(1 "component")
 	Line[1480.00mil 55.8260mm 40.1860mm 2300.00mil 80.00mil 20.00mil "clearline"]
 	Line[42.9100mm 2400.00mil 1490.00mil 2400.00mil 80.00mil 20.00mil "clearline"]
 	Line[1490.00mil 2400.00mil 1465.00mil 2375.00mil 80.00mil 20.00mil "clearline"]
-	Line[1465.00mil 2375.00mil 1465.00mil 2330.00mil 80.00mil 20.00mil "clearline"]
 	Line[1450.00mil 2053.00mil 1450.00mil 2100.00mil 25.00mil 20.00mil "clearline"]
 	Line[1450.00mil 2100.00mil 1480.00mil 2130.00mil 25.00mil 20.00mil "clearline"]
 	Line[1320.00mil 2105.00mil 1325.00mil 2105.00mil 25.00mil 20.00mil "clearline"]
 	Line[1325.00mil 2105.00mil 1360.00mil 2140.00mil 25.00mil 20.00mil "clearline"]
 	Line[1377.50mil 2122.50mil 1360.00mil 2140.00mil 25.00mil 20.00mil "clearline"]
+	Line[1450.00mil 2330.00mil 1450.00mil 2365.00mil 80.00mil 20.00mil "clearline"]
+	Line[1450.00mil 2365.00mil 1485.00mil 2400.00mil 80.00mil 20.00mil "clearline"]
+	Line[1485.00mil 2400.00mil 1500.00mil 2400.00mil 80.00mil 20.00mil "clearline"]
+	Line[1500.00mil 2400.00mil 1600.00mil 2500.00mil 80.00mil 20.00mil "clearline"]
 )
 Layer(2 "solder")
 (
