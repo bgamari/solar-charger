@@ -120,6 +120,9 @@ void led7_on(void) { gpio_clear(GPIOA, GPIO0); }
 
 int main(void)
 {
+  const clock_scale_t* clk = &clock_config[CLOCK_VRANGE1_HSI_RAW_16MHZ];
+  rcc_clock_setup_hsi(clk);
+
   //PWR_CR = (PWR_CR & ~(0x7 << 5)) | (0x6 << 5) | PWR_CR_PVDE; // PVD = 3.1V
   //exti_enable_request(EXTI16); // PVD interrupt
   init_systick();

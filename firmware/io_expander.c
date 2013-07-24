@@ -25,9 +25,10 @@ static void enable_io_expander(void)
   delay_ms(1);
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_I2C1EN);
   i2c_reset(I2C1);
-  i2c_set_clock_frequency(I2C1, 2);
+  // setup clocking: change when clocking is changed
+  i2c_set_clock_frequency(I2C1, 16);
+  i2c_set_ccr(I2C1, 0x40);
   i2c_set_standard_mode(I2C1);
-  i2c_set_ccr(I2C1, 0x4);
   i2c_peripheral_enable(I2C1);
   update_leds();
 }
