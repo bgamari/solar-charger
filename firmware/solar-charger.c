@@ -185,7 +185,8 @@ int main(void)
     } else if (cmd[0] == 'p') {
       uint32_t period = strtol(&cmd[1], NULL, 10);
       regulator_set_mode(reg, DISABLED);
-      regulator_set_period(reg, period);
+      if (period == 0)
+        regulator_set_period(reg, period);
       regulator_set_mode(reg, CONST_DUTY);
       strcpy(cmd, "period = ");
       itoa(&cmd[strlen(cmd)], 10, period);
