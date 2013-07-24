@@ -427,7 +427,7 @@ enum feedback_mode regulator_get_mode(struct regulator_t *reg)
 
 int regulator_set_duty_cycle(struct regulator_t *reg, fract32_t d1, fract32_t d2)
 {
-  if (reg->mode != CONST_DUTY)
+  if (reg->mode != CONST_DUTY && reg->mode != DISABLED)
     return 1;
   if (d2 > d1)
     return 2;
