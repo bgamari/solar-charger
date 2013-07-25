@@ -186,13 +186,15 @@ int main(void)
         strcat(cmd, "\n");
       }
     } else if (cmd[0] == 'p') {
-      uint32_t period = strtol(&cmd[1], NULL, 10);
-      regulator_set_mode(reg, DISABLED);
-      if (period != 0)
-        regulator_set_period(reg, period);
-      regulator_set_mode(reg, CONST_DUTY);
+      if (cmd[1] == '=') {
+        uint32_t period = strtol(&cmd[2], NULL, 10);
+        regulator_set_mode(reg, DISABLED);
+        if (period != 0)
+          regulator_set_period(reg, period);
+        regulator_set_mode(reg, CONST_DUTY);
+      }
       strcpy(cmd, "period = ");
-      itoa(&cmd[strlen(cmd)], 10, period);
+      itoa(&cmd[strlen(cmd)], 10, regulator_get_period(reg));
       strcat(cmd, "\n");
     } else if (cmd[0] == 's' && cmd[1] == 'v') {
       if (cmd[2] == '=') {
