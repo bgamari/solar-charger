@@ -496,3 +496,8 @@ int regulator_set_period(struct regulator_t *reg, unsigned int period)
   reg->period = period;
   return 0;
 }
+
+unsigned int regulator_get_period(struct regulator_t *reg)
+{
+  return reg->period;
+}
